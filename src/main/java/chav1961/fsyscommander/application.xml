@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<app:root xmlns:app="http://ui.purelib.chav1961/">
+	<app:i18n location="i18n:prop:chav1961/fsyscommander/i18n/i18n"/>
+	<app:menu id="mainmenu">
+		<app:submenu name="menu.file" caption="menu.file" tooltip="menu.ttFile">
+			<app:item name="menu.file.cleandesktop" caption="menu.cleanDesktop" tooltip="menu.ttCleanDesktop" action="cleanDektop"/>
+			<app:separator/>
+			<app:item name="menu.file.newpipe" caption="menu.newPipe" tooltip="menu.ttNewPipe" action="newPipe"/>
+			<app:item name="menu.file.loadpipe" caption="menu.loadPipe" tooltip="menu.ttLoadPipe" action="loadPipe"/>
+			<app:separator/>
+			<app:item name="menu.file.savepipe" caption="menu.savePipe" tooltip="menu.ttSavePipe" action="savePipe"/>
+			<app:item name="menu.file.savepipeAs" caption="menu.savePipeAs" tooltip="menu.ttSavePipeAs" action="savePipeAs"/>
+			<app:separator/>
+			<app:item name="menu.file.exit" caption="menu.exit" tooltip="menu.ttExit" action="exit"/>
+		</app:submenu>
+		<app:submenu name="menu.tools" caption="menu.tools" tooltip="menu.ttTools">
+			<app:item name="menu.tools.find" caption="menu.find" tooltip="menu.ttFind" action="find"/>
+			<app:item name="menu.tools.index" caption="menu.index" tooltip="menu.ttIndex" action="index"/>
+			<app:separator/>
+			<app:builtinSubmenu name="builtin.languages" caption="menu.languages" tooltip="menu.ttLanguages"/>
+			<app:item name="menu.tools.settings" caption="menu.settings" tooltip="menu.ttSettings" action="settings"/>
+		</app:submenu>
+		<app:submenu name="menu.help" caption="menu.help" tooltip="menu.ttHelp">
+			<app:item name="menu.help.about" caption="menu.about" tooltip="menu.ttAbout" action="helpAbout"/>
+		</app:submenu>
+	</app:menu>
+	<app:menu id="navigator">
+		<app:submenu name="menu.elements" caption="menu.elements" tooltip="menu.ttElements">
+			<app:submenu name="menu.elements.coils" caption="menu.elements.coils" tooltip="menu.ttElements.coils">
+				<app:item name="menu.elements.coils.onelayer" caption="menu.elements.coils.onelayer" tooltip="menu.ttElements.coils.onelayer" action="SingleCoilsService"/>
+				<app:item name="menu.elements.coils.ringlayer" caption="menu.elements.coils.ringlayer" tooltip="menu.ttElements.coils.ringlayer" action="RingCoilsService"/>
+			</app:submenu>
+		</app:submenu>
+		<app:submenu name="menu.components" caption="menu.components" tooltip="menu.ttComponents">
+			<app:item name="menu.components.lccontour" caption="menu.components.lccontour" tooltip="menu.ttComponents.lccontour" action="LCContourService"/>
+			<app:item name="menu.components.rcgenerator" caption="menu.components.rcgenerator" tooltip="menu.ttComponents.rcgenerator" action="RCGeneratorService"/>
+		</app:submenu>
+		<app:submenu name="menu.schemes" caption="menu.schemes" tooltip="menu.ttSchemes">
+			<app:submenu name="menu.schemes.powerfactor" caption="menu.schemes.powerfactor" tooltip="menu.ttSchemes.powerfactor">
+				<app:item name="menu.schemes.powerfactor.mc34262" caption="menu.schemes.powerfactor.mc34262" tooltip="menu.ttSchemes.powerfactor.mc34262" action="MC34262Service"/>
+			</app:submenu>
+			<app:submenu name="menu.schemes.stepup" caption="menu.schemes.stepup" tooltip="menu.ttSchemes.stepup">
+				<app:item name="menu.schemes.stepup.mc34063" caption="menu.schemes.stepup.mc34063" tooltip="menu.ttSchemes.stepup.mc34063" action="MC34063UpService"/>
+				<app:item name="menu.schemes.stepup.ucX84X" caption="menu.schemes.stepup.ucX84X" tooltip="menu.ttSchemes.stepup.ucX84X" action="UCX84XUpService"/>
+			</app:submenu>
+			<app:submenu name="menu.schemes.stepdown" caption="menu.schemes.stepdown" tooltip="menu.ttSchemes.stepdown">
+				<app:item name="menu.schemes.stepdown.mc34063" caption="menu.schemes.stepdown.mc34063" tooltip="menu.ttSchemes.stepdown.mc34063" action="MC34063DownService"/>
+				<app:item name="menu.schemes.stepdown.tps40200" caption="menu.schemes.stepdown.tps40200" tooltip="menu.ttSchemes.stepdown.tps40200" action="TPS40200Service"/>
+			</app:submenu>
+			<app:submenu name="menu.schemes.transmitter" caption="menu.schemes.transmitter" tooltip="menu.ttSchemes.transmitter">
+				<app:item name="menu.schemes.transmitter.pcontour" caption="menu.schemes.transmitter.pcontour" tooltip="menu.ttSchemes.transmitter.pcontour" action="PContourService"/>
+				<app:item name="menu.schemes.transmitter.quartzfilter" caption="menu.schemes.transmitter.quartzfilter" tooltip="menu.ttSchemes.transmitter.quartzfilter" action="QuartzFilterService"/>
+			</app:submenu>
+		</app:submenu>
+		<app:submenu name="menu.pipes" caption="menu.pipes" tooltip="menu.ttPipes">
+			<app:item name="menu.pipes.startnode" caption="menu.pipes.startnode" tooltip="menu.ttPipes.Startnode" action="StartNode"/>
+			<app:item name="menu.pipes.formulanode" caption="menu.pipes.formulanode" tooltip="menu.ttPipes.formulanode" action="FormulaNode"/>
+			<app:item name="menu.pipes.switchnode" caption="menu.pipes.switchnode" tooltip="menu.ttPipes.switchnode" action="SwitchNode"/>
+			<app:item name="menu.pipes.mapnode" caption="menu.pipes.mapnode" tooltip="menu.ttPipes.mapnode" action="MapNode"/>
+			<app:item name="menu.pipes.reducenode" caption="menu.pipes.reducenode" tooltip="menu.ttPipes.reducenode" action="ReduceNode"/>
+			<app:item name="menu.pipes.terminalnode" caption="menu.pipes.terminalnode" tooltip="menu.ttPipes.terminalnode" action="TerminalNode"/>
+		</app:submenu>
+	</app:menu>
+	<app:menu id="desktopToolbar">
+		<app:item name="desktop.toolbar.closeAll" caption="desktop.toolbar.closeAll" tooltip="desktop.toolbar.closeAllTT" icon="root://chav1961.calc.Application/chav1961/calc/closeAll.png" action="closeAll"/>
+		<app:item name="menu.tools.find" caption="menu.find" tooltip="menu.ttFind" icon="root://chav1961.calc.Application/chav1961/calc/find.png" action="find"/>
+	</app:menu>
+	<app:menu id="searchToolbar">
+		<app:item name="search.toolbar.close" caption="search.toolbar.close" tooltip="search.toolbar.closeTT" icon="root://chav1961.calc.Application/chav1961/calc/closeAll.png" action="closeSearch"/>
+	</app:menu>
+</app:root>
