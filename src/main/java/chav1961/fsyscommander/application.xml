@@ -2,70 +2,105 @@
 <app:root xmlns:app="http://ui.purelib.chav1961/">
 	<app:i18n location="i18n:prop:chav1961/fsyscommander/i18n/i18n"/>
 	<app:menu id="mainmenu">
-		<app:submenu name="menu.file" caption="menu.file" tooltip="menu.ttFile">
-			<app:item name="menu.file.cleandesktop" caption="menu.cleanDesktop" tooltip="menu.ttCleanDesktop" action="cleanDektop"/>
+		<app:submenu name="menu.left" caption="menu.left" tooltip="menu.left.tt">
+			<app:item name="menu.left.asTable" caption="menu.left.asTable" tooltip="menu.left.asTable.tt" action="left.asTable"/>
+			<app:item name="menu.left.asTree" caption="menu.left.asTree" tooltip="menu.left.asTree.tt" action="left.asTree"/>
 			<app:separator/>
-			<app:item name="menu.file.newpipe" caption="menu.newPipe" tooltip="menu.ttNewPipe" action="newPipe"/>
-			<app:item name="menu.file.loadpipe" caption="menu.loadPipe" tooltip="menu.ttLoadPipe" action="loadPipe"/>
-			<app:separator/>
-			<app:item name="menu.file.savepipe" caption="menu.savePipe" tooltip="menu.ttSavePipe" action="savePipe"/>
-			<app:item name="menu.file.savepipeAs" caption="menu.savePipeAs" tooltip="menu.ttSavePipeAs" action="savePipeAs"/>
-			<app:separator/>
-			<app:item name="menu.file.exit" caption="menu.exit" tooltip="menu.ttExit" action="exit"/>
+			<app:item name="menu.left.sortModes" caption="menu.left.sortModes" tooltip="menu.left.sortModes.tt" action="left.sortModes"/>
+			<app:item name="menu.left.onoffpanel" caption="menu.left.onoffpanel" tooltip="menu.left.onoffpanel.tt" action="left.onoffpanel"/>
+			<app:item name="menu.left.changeFS" caption="menu.left.changeFS" tooltip="menu.left.changeFS.tt" action="left.changeFS"/>
 		</app:submenu>
-		<app:submenu name="menu.tools" caption="menu.tools" tooltip="menu.ttTools">
-			<app:item name="menu.tools.find" caption="menu.find" tooltip="menu.ttFind" action="find"/>
-			<app:item name="menu.tools.index" caption="menu.index" tooltip="menu.ttIndex" action="index"/>
+		<app:submenu name="menu.files" caption="menu.files" tooltip="menu.files.tt">
+			<app:item name="menu.files.view" caption="menu.files.view" tooltip="menu.files.view.tt" action="files.view"/>
+			<app:item name="menu.files.edit" caption="menu.files.edit" tooltip="menu.files.edit.tt" action="files.edit"/>
+			<app:item name="menu.files.copy" caption="menu.files.copy" tooltip="menu.files.copy.tt" action="files.copy"/>
+			<app:item name="menu.files.move" caption="menu.files.move" tooltip="menu.files.move.tt" action="files.move"/>
+			<app:item name="menu.files.mkdir" caption="menu.files.mkdir" tooltip="menu.files.mkdir.tt" action="files.mkdir"/>
+			<app:item name="menu.files.remove" caption="menu.files.remove" tooltip="menu.files.remove.tt" action="files.remove"/>
 			<app:separator/>
-			<app:builtinSubmenu name="builtin.languages" caption="menu.languages" tooltip="menu.ttLanguages"/>
-			<app:item name="menu.tools.settings" caption="menu.settings" tooltip="menu.ttSettings" action="settings"/>
+			<app:item name="menu.files.mount" caption="menu.files.mount" tooltip="menu.files.mount.tt" action="files.mount"/>
+			<app:item name="menu.files.unmount" caption="menu.files.unmount" tooltip="menu.files.unmount.tt" action="files.unmount"/>
+			<app:separator/>
+			<app:item name="menu.files.select" caption="menu.files.select" tooltip="menu.files.select.tt" action="files.select"/>
+			<app:item name="menu.files.unselect" caption="menu.files.unselect" tooltip="menu.files.unselect.tt" action="files.unselect"/>
+			<app:item name="menu.files.invselect" caption="menu.files.invselect" tooltip="menu.files.invselect.tt" action="files.invselect"/>
+			<app:item name="menu.files.restselect" caption="menu.files.restselect" tooltip="menu.files.restselect.tt" action="files.restselect"/>
+			<app:separator/>
+			<app:item name="menu.files.exit" caption="menu.files.exit" tooltip="menu.files.exit.tt" action="files.exit"/>
 		</app:submenu>
-		<app:submenu name="menu.help" caption="menu.help" tooltip="menu.ttHelp">
-			<app:item name="menu.help.about" caption="menu.about" tooltip="menu.ttAbout" action="helpAbout"/>
+		<app:submenu name="menu.commands" caption="menu.commands" tooltip="menu.commands.tt">
+			<app:item name="menu.commands.findfile" caption="menu.commands.findfile" tooltip="menu.commands.findfile.tt" action="command.findfile"/>
+			<app:item name="menu.commands.findfolders" caption="menu.commands.findfolders" tooltip="menu.commands.findfolders.tt" action="command.findfolders"/>
+			<app:item name="menu.commands.comparefolders" caption="menu.commands.comparefolders" tooltip="menu.commands.comparefolders.tt" action="command.comparefolders"/>
+			<app:separator/>
+			<app:item name="menu.commands.swappanels" caption="menu.commands.swappanels" tooltip="menu.commands.swappanels.tt" action="command.swappanels"/>
+			<app:item name="menu.commands.onoffpanels" caption="menu.commands.onoffpanels" tooltip="menu.commands.onoffpanels.tt" action="command.onoffpanels"/>
+		</app:submenu>
+		<app:submenu name="menu.settings" caption="menu.settings" tooltip="menu.settings.tt">
+			<app:item name="menu.settings.system" caption="menu.settings.system" tooltip="menu.settings.system.tt" action="settings.system"/>
+			<app:item name="menu.settings.panel" caption="menu.settings.panel" tooltip="menu.settings.panel.tt" action="settings.panel"/>
+			<app:item name="menu.settings.lang" caption="menu.settings.lang" tooltip="menu.settings.lang.tt" action="settings.lang"/>
+			<app:separator/>
+			<app:item name="menu.settings.viewer" caption="menu.settings.viewer" tooltip="menu.settings.viewer.tt" action="settings.viewer"/>
+			<app:item name="menu.settings.editor" caption="menu.settings.editor" tooltip="menu.settings.editor.tt" action="settings.editor"/>
+			<app:separator/>
+			<app:item name="menu.settings.colors" caption="menu.settings.colors" tooltip="menu.settings.colors.tt" action="settings.colors"/>
+			<app:item name="menu.settings.highlighting" caption="menu.settings.highlighting" tooltip="menu.settings.highlighting.tt" action="settings.highlighting"/>
+			<app:item name="menu.settings.confirm" caption="menu.settings.confirm" tooltip="menu.settings.confirm.tt" action="settings.confirm"/>
+			<app:separator/>
+			<app:item name="menu.settings.save" caption="menu.settings.save" tooltip="menu.settings.save.tt" action="settings.save"/>
+		</app:submenu>
+		<app:submenu name="menu.right" caption="menu.right" tooltip="menu.right.tt">
+			<app:item name="menu.right.asTable" caption="menu.right.asTable" tooltip="menu.right.asTable.tt" action="right.asTable"/>
+			<app:item name="menu.right.asTree" caption="menu.right.asTree" tooltip="menu.right.asTree.tt" action="right.asTree"/>
+			<app:separator/>
+			<app:item name="menu.right.sortModes" caption="menu.right.sortModes" tooltip="menu.right.sortModes.tt" action="right.sortModes"/>
+			<app:item name="menu.right.onoffpanel" caption="menu.right.onoffpanel" tooltip="menu.right.onoffpanel.tt" action="right.onoffpanel"/>
+			<app:item name="menu.right.changeFS" caption="menu.right.changeFS" tooltip="menu.right.changeFS.tt" action="right.changeFS"/>
+		</app:submenu>
+		<app:submenu name="menu.help" caption="menu.help" tooltip="menu.help.tt">
+			<app:item name="menu.help.guide" caption="menu.help.guide" tooltip="menu.help.guide.tt" action="help.guide"/>
+			<app:item name="menu.help.update" caption="menu.help.update" tooltip="menu.help.update.tt" action="help.update"/>
+			<app:separator/>
+			<app:item name="menu.help.about" caption="menu.help.about" tooltip="menu.help.about.tt" action="help.about"/>
 		</app:submenu>
 	</app:menu>
-	<app:menu id="navigator">
-		<app:submenu name="menu.elements" caption="menu.elements" tooltip="menu.ttElements">
-			<app:submenu name="menu.elements.coils" caption="menu.elements.coils" tooltip="menu.ttElements.coils">
-				<app:item name="menu.elements.coils.onelayer" caption="menu.elements.coils.onelayer" tooltip="menu.ttElements.coils.onelayer" action="SingleCoilsService"/>
-				<app:item name="menu.elements.coils.ringlayer" caption="menu.elements.coils.ringlayer" tooltip="menu.ttElements.coils.ringlayer" action="RingCoilsService"/>
-			</app:submenu>
-		</app:submenu>
-		<app:submenu name="menu.components" caption="menu.components" tooltip="menu.ttComponents">
-			<app:item name="menu.components.lccontour" caption="menu.components.lccontour" tooltip="menu.ttComponents.lccontour" action="LCContourService"/>
-			<app:item name="menu.components.rcgenerator" caption="menu.components.rcgenerator" tooltip="menu.ttComponents.rcgenerator" action="RCGeneratorService"/>
-		</app:submenu>
-		<app:submenu name="menu.schemes" caption="menu.schemes" tooltip="menu.ttSchemes">
-			<app:submenu name="menu.schemes.powerfactor" caption="menu.schemes.powerfactor" tooltip="menu.ttSchemes.powerfactor">
-				<app:item name="menu.schemes.powerfactor.mc34262" caption="menu.schemes.powerfactor.mc34262" tooltip="menu.ttSchemes.powerfactor.mc34262" action="MC34262Service"/>
-			</app:submenu>
-			<app:submenu name="menu.schemes.stepup" caption="menu.schemes.stepup" tooltip="menu.ttSchemes.stepup">
-				<app:item name="menu.schemes.stepup.mc34063" caption="menu.schemes.stepup.mc34063" tooltip="menu.ttSchemes.stepup.mc34063" action="MC34063UpService"/>
-				<app:item name="menu.schemes.stepup.ucX84X" caption="menu.schemes.stepup.ucX84X" tooltip="menu.ttSchemes.stepup.ucX84X" action="UCX84XUpService"/>
-			</app:submenu>
-			<app:submenu name="menu.schemes.stepdown" caption="menu.schemes.stepdown" tooltip="menu.ttSchemes.stepdown">
-				<app:item name="menu.schemes.stepdown.mc34063" caption="menu.schemes.stepdown.mc34063" tooltip="menu.ttSchemes.stepdown.mc34063" action="MC34063DownService"/>
-				<app:item name="menu.schemes.stepdown.tps40200" caption="menu.schemes.stepdown.tps40200" tooltip="menu.ttSchemes.stepdown.tps40200" action="TPS40200Service"/>
-			</app:submenu>
-			<app:submenu name="menu.schemes.transmitter" caption="menu.schemes.transmitter" tooltip="menu.ttSchemes.transmitter">
-				<app:item name="menu.schemes.transmitter.pcontour" caption="menu.schemes.transmitter.pcontour" tooltip="menu.ttSchemes.transmitter.pcontour" action="PContourService"/>
-				<app:item name="menu.schemes.transmitter.quartzfilter" caption="menu.schemes.transmitter.quartzfilter" tooltip="menu.ttSchemes.transmitter.quartzfilter" action="QuartzFilterService"/>
-			</app:submenu>
-		</app:submenu>
-		<app:submenu name="menu.pipes" caption="menu.pipes" tooltip="menu.ttPipes">
-			<app:item name="menu.pipes.startnode" caption="menu.pipes.startnode" tooltip="menu.ttPipes.Startnode" action="StartNode"/>
-			<app:item name="menu.pipes.formulanode" caption="menu.pipes.formulanode" tooltip="menu.ttPipes.formulanode" action="FormulaNode"/>
-			<app:item name="menu.pipes.switchnode" caption="menu.pipes.switchnode" tooltip="menu.ttPipes.switchnode" action="SwitchNode"/>
-			<app:item name="menu.pipes.mapnode" caption="menu.pipes.mapnode" tooltip="menu.ttPipes.mapnode" action="MapNode"/>
-			<app:item name="menu.pipes.reducenode" caption="menu.pipes.reducenode" tooltip="menu.ttPipes.reducenode" action="ReduceNode"/>
-			<app:item name="menu.pipes.terminalnode" caption="menu.pipes.terminalnode" tooltip="menu.ttPipes.terminalnode" action="TerminalNode"/>
-		</app:submenu>
-	</app:menu>
-	<app:menu id="desktopToolbar">
-		<app:item name="desktop.toolbar.closeAll" caption="desktop.toolbar.closeAll" tooltip="desktop.toolbar.closeAllTT" icon="root://chav1961.calc.Application/chav1961/calc/closeAll.png" action="closeAll"/>
-		<app:item name="menu.tools.find" caption="menu.find" tooltip="menu.ttFind" icon="root://chav1961.calc.Application/chav1961/calc/find.png" action="find"/>
-	</app:menu>
-	<app:menu id="searchToolbar">
-		<app:item name="search.toolbar.close" caption="search.toolbar.close" tooltip="search.toolbar.closeTT" icon="root://chav1961.calc.Application/chav1961/calc/closeAll.png" action="closeSearch"/>
-	</app:menu>
+	<app:keyset id="mainmenu.keyset">
+		<app:key code="1" ctrl="true" action="left.asTable"/>
+		<app:key code="2" ctrl="true" action="left.asTree"/>
+		<app:key code="F1" ctrl="true" shift="true" action="left.sortModes"/>
+		<app:key code="F1" ctrl="true" action="left.onoffpanel"/>
+		<app:key code="F1" alt="true" action="left.changeFS"/>
+		
+		<app:key code="F3" action="files.view"/>
+		<app:key code="F4" action="files.edit"/>
+		<app:key code="F5" action="files.copy"/>
+		<app:key code="F6" action="files.move"/>
+		<app:key code="F7" action="files.mkdir"/>
+		<app:key code="F8" action="files.remove"/>
+		<app:key code="ADD" ctrl="true" action="files.mount"/>
+		<app:key code="SUBTRACT" ctrl="true" action="files.unmount"/>
+		<app:key code="ADD" action="files.select"/>
+		<app:key code="SUBTRACT" action="files.unselect"/>
+		<app:key code="MULTIPLY" action="files.invselect"/>
+		<app:key code="M" ctrl="true" action="files.restselect"/>
+		<app:key code="F10" ctrl="true" action="files.exit"/>
+
+		<app:key code="F7" alt="true" action="command.findfile"/>
+		<app:key code="F10" alt="true" action="command.findfolders"/>
+		<app:key code="F8" alt="true" action="command.comparefolders"/>
+		<app:key code="U" ctrl="true" action="command.swappanels"/>
+		<app:key code="O" ctrl="true" action="command.onoffpanels"/>
+
+		<app:key code="F9" shift="true" action="settings.save"/>
+		
+		<app:key code="9" ctrl="true" action="right.asTable"/>
+		<app:key code="0" ctrl="true" action="right.asTree"/>
+		<app:key code="F2" ctrl="true" shift="true" action="right.sortModes"/>
+		<app:key code="F2" ctrl="true" action="right.onoffpanel"/>
+		<app:key code="F2" alt="true" action="right.changeFS"/>
+
+		<app:key code="F1" action="help.guide"/>
+		<app:key code="U" alt="true" action="help.update"/>
+	</app:keyset>		
 </app:root>

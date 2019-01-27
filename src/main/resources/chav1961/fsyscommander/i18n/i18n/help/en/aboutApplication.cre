@@ -1,7 +1,6 @@
-=== Radioamator's calculator
+=== The next Norton Commander clone
 
-This application contains a set of useful calculations sometimes needed in radioamator's practice. 
-During development, there was a goal to create not only useful application, but deep test my library 
-[[https://github.com/chav1961/purelib|Pure Library]] on it (bugs, functionality, easy-to-use 
-and so on). I hope, that the first goal is not strongly damaged by second one 
-{{root:chav1961.calc.Application!smile.png| }}  
+Main difference of the clone is support of the different file system. There is no more difference with other
+clones functionality. The next goal to developing the application was testing my [[https://github.com/chav1961/purelib|Pure Library]]
+(bugs, usability, simplicity etc). Hope, that the second didn't damage the first 
+{{root:chav1961.fsyscommander.Application!smile.png|}}  
