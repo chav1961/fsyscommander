@@ -9,9 +9,13 @@ import java.awt.Toolkit;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Locale;
+import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -28,14 +32,19 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import chav1961.fsyscommander.help.HelpService;
 import chav1961.purelib.basic.ArgParser;
 import chav1961.purelib.basic.PureLibSettings;
+import chav1961.purelib.basic.SubstitutableProperties;
 import chav1961.purelib.basic.SystemErrLoggerFacade;
 import chav1961.purelib.basic.Utils;
 import chav1961.purelib.basic.exceptions.ContentException;
 import chav1961.purelib.basic.exceptions.EnvironmentException;
 import chav1961.purelib.basic.exceptions.LocalizationException;
 import chav1961.purelib.basic.exceptions.PreparationException;
+import chav1961.purelib.basic.interfaces.LoggerFacade;
+import chav1961.purelib.basic.interfaces.LoggerFacade.Severity;
+import chav1961.purelib.etc.HandlersTest;
 import chav1961.purelib.i18n.LocalizerFactory;
 import chav1961.purelib.i18n.PureLibLocalizer;
 import chav1961.purelib.i18n.interfaces.Localizer;
@@ -50,22 +59,30 @@ import chav1961.purelib.ui.swing.useful.JLocalizedOptionPane;
 import chav1961.purelib.ui.swing.useful.JStateString;
 
 public class Application extends JFrame implements LocaleChangeListener {
-	private static final long 	serialVersionUID = -8313830909078065332L;
-	private static final String	APPLICATION_TITLE = "Application.title";
-	private static final String	HELP_TITLE = "Application.help.title";
-	private static final String	HELP_CONTENT = "Application.help.content";
-	private static final Icon[]	AVATAR = {null, null, null, new ImageIcon(Application.class.getResource("avatar.jpg"))};
-
-	private final Localizer		localizer;
-	private final JStateString	state;
-	private final JPanel		container = new JPanel(new GridLayout(1,2));
-	private final ViewerAsTable	leftContainer = new ViewerAsTable();
-	private final ViewerAsTable	rightContainer = new ViewerAsTable();
-	private final JTextField	commandString = new JTextField();
-	private final JPanel		bottomArea = new JPanel(new GridLayout(2,1));
-	private final JMenuBar		menu;
+	private static final long 		serialVersionUID = -8313830909078065332L;
 	
-	public Application(final ContentMetadataInterface model) throws IOException, LocalizationException {
+	public static final String		ARG_PORT = "port";
+	public static final String		ARG_ROOT = "root";
+	
+	private static final String		APPLICATION_TITLE = "Application.title";
+	private static final String		HELP_TITLE = "Application.help.title";
+	private static final String		HELP_CONTENT = "Application.help.content";
+	private static final Icon[]		AVATAR = {null, null, null, new ImageIcon(Application.class.getResource("avatar.jpg"))};
+
+	private final Localizer			localizer;
+	private final CountDownLatch	latch;
+	private final InetSocketAddress	addr;
+	private final JStateString		state;
+	private final JPanel			container = new JPanel(new GridLayout(1,2));
+	private final ViewerAsTable		leftContainer = new ViewerAsTable();
+	private final ViewerAsTable		rightContainer = new ViewerAsTable();
+	private final JTextField		commandString = new JTextField();
+	private final JPanel			bottomArea = new JPanel(new GridLayout(2,1));
+	private final JMenuBar			menu;
+	
+	public Application(final ContentMetadataInterface model, final CountDownLatch latch, final InetSocketAddress addr) throws IOException, LocalizationException {
+		this.latch = latch;
+		this.addr = addr;
 		this.localizer = LocalizerFactory.getLocalizer(model.getRoot().getLocalizerAssociated());
 		this.state = new JStateString(this.localizer);
 		this.state.setBorder(new LineBorder(Color.BLACK));
@@ -175,6 +192,7 @@ public class Application extends JFrame implements LocaleChangeListener {
 	private void fileExit() {
 		setVisible(false);
 		dispose();
+		latch.countDown();
 	}
 
 	/*
@@ -291,7 +309,12 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/help.guide")
 	private void helpGuide() throws LocalizationException, IOException {
-		
+		if (Desktop.isDesktopSupported()) {
+			Desktop.getDesktop().browse(URI.create("http://"+addr.getHostName()+":"+addr.getPort()));
+		}
+		else {
+			state.message(Severity.warning, "Desktop is not supported to start browser...");
+		}
 	}
 	
 	@OnAction("action:/help.update")
@@ -327,23 +350,28 @@ public class Application extends JFrame implements LocaleChangeListener {
 		setTitle(localizer.getValue(APPLICATION_TITLE));
 	}
 
-	public static void main(String[] args) throws ContentException, IOException, LocalizationException, PreparationException {
+	public static void main(String[] args) throws ContentException, IOException, LocalizationException, PreparationException, InterruptedException {
 		final ArgParser		ap = new ApplicationArgParser().parse(args);
-//		final Properties	props = Utils.mkProps(NanoServiceFactory.NANOSERVICE_PORT,,NANOSERVICE_ROOT,);
+		final Properties	props = Utils.mkProps(NanoServiceFactory.NANOSERVICE_PORT,ap.getValue(ARG_PORT,Integer.class).toString()
+												 ,NanoServiceFactory.NANOSERVICE_ROOT,ap.getValue(ARG_ROOT,URI.class).toString());
 		
 		
-//		public static final String 		NANOSERVICE_PORT = "nanoservicePort";
-//		public static final String 		NANOSERVICE_ROOT = "nanoserviceRoot";
-		
-		try(final InputStream	is = Application.class.getResourceAsStream("application.xml")) {
+		try(final InputStream		is = Application.class.getResourceAsStream("application.xml");
+			final LoggerFacade		log = new SystemErrLoggerFacade();
+			final HelpService		hs = new HelpService(log, new SubstitutableProperties(props))) {
+			final CountDownLatch 	latch = new CountDownLatch(1);
 			
-			new Application(ContentModelFactory.forXmlDescription(is)).setVisible(true);
+			hs.start();
+			new Application(ContentModelFactory.forXmlDescription(is),latch,new InetSocketAddress("localhost",ap.getValue(ARG_PORT,Integer.class))).setVisible(true);
+			latch.await();
+			hs.stop();
 		}
 	}
 
 	private static class ApplicationArgParser extends ArgParser {
 		private static final ArgDescription[]	PARM_LIST = {
-							new IntegerArg("port",false,false,"port to open nanoservice for help with browsers")
+							 new IntegerArg(ARG_PORT,false,"port to open nanoservice for help with browsers",12321)
+							,new URIArg(ARG_ROOT,false,"root to open nanoservice for help with browsers","fsys:"+Application.class.getResource("Application.class")+"!../../../chav1961/fsyscommander/static")
 							};	
 		
 		public ApplicationArgParser() {
