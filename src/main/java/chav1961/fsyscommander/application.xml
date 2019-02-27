@@ -35,6 +35,8 @@
 			<app:separator/>
 			<app:item name="menu.commands.swappanels" caption="menu.commands.swappanels" tooltip="menu.commands.swappanels.tt" action="command.swappanels"/>
 			<app:item name="menu.commands.onoffpanels" caption="menu.commands.onoffpanels" tooltip="menu.commands.onoffpanels.tt" action="command.onoffpanels"/>
+			<app:separator/>
+			<app:item name="menu.commands.escape" caption="menu.commands.escape" tooltip="menu.commands.escape.tt" action="escape"/>
 		</app:submenu>
 		<app:submenu name="menu.settings" caption="menu.settings" tooltip="menu.settings.tt">
 			<app:item name="menu.settings.system" caption="menu.settings.system" tooltip="menu.settings.system.tt" action="settings.system"/>
@@ -102,5 +104,6 @@
 
 		<app:key code="F1" action="help.guide"/>
 		<app:key code="U" alt="true" action="help.update"/>
+		<app:key code="ESCAPE" action="escape"/>
 	</app:keyset>		
 </app:root>
