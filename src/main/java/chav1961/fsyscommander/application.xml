@@ -41,7 +41,6 @@
 		<app:submenu name="menu.settings" caption="menu.settings" tooltip="menu.settings.tt">
 			<app:item name="menu.settings.system" caption="menu.settings.system" tooltip="menu.settings.system.tt" action="settings.system"/>
 			<app:item name="menu.settings.panel" caption="menu.settings.panel" tooltip="menu.settings.panel.tt" action="settings.panel"/>
-			<app:item name="menu.settings.lang" caption="menu.settings.lang" tooltip="menu.settings.lang.tt" action="settings.lang"/>
 			<app:separator/>
 			<app:item name="menu.settings.viewer" caption="menu.settings.viewer" tooltip="menu.settings.viewer.tt" action="settings.viewer"/>
 			<app:item name="menu.settings.editor" caption="menu.settings.editor" tooltip="menu.settings.editor.tt" action="settings.editor"/>

@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -42,6 +43,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import chav1961.fsyscommander.Settings.Confirms;
+import chav1961.fsyscommander.Settings.PanelSettings;
+import chav1961.fsyscommander.Settings.SystemSettings;
 import chav1961.fsyscommander.help.HelpService;
 import chav1961.purelib.basic.ArgParser;
 import chav1961.purelib.basic.PureLibSettings;
@@ -50,6 +54,7 @@ import chav1961.purelib.basic.SystemErrLoggerFacade;
 import chav1961.purelib.basic.Utils;
 import chav1961.purelib.basic.exceptions.ContentException;
 import chav1961.purelib.basic.exceptions.EnvironmentException;
+import chav1961.purelib.basic.exceptions.FlowException;
 import chav1961.purelib.basic.exceptions.LocalizationException;
 import chav1961.purelib.basic.exceptions.PreparationException;
 import chav1961.purelib.basic.interfaces.LoggerFacade;
@@ -62,6 +67,9 @@ import chav1961.purelib.i18n.interfaces.Localizer.LocaleChangeListener;
 import chav1961.purelib.model.ContentModelFactory;
 import chav1961.purelib.model.interfaces.ContentMetadataInterface;
 import chav1961.purelib.nanoservice.NanoServiceFactory;
+import chav1961.purelib.ui.interfacers.FormManager;
+import chav1961.purelib.ui.interfacers.RefreshMode;
+import chav1961.purelib.ui.swing.AutoBuiltForm;
 import chav1961.purelib.ui.swing.SwingModelUtils;
 import chav1961.purelib.ui.swing.SwingUtils;
 import chav1961.purelib.ui.swing.interfaces.OnAction;
@@ -86,9 +94,33 @@ public class Application extends JFrame implements LocaleChangeListener {
 	private static final int		STATE_ORDINAL = 0;
 	private static final int		STATE_IN_VIEW = 1;
 	private static final int		STATE_IN_EDIT = 2;
+
+	private static final FormManager<Object,Object>	DUMMY_MGR = new FormManager<Object,Object>() {
+										@Override
+										public RefreshMode onRecord(Action action, Object oldRecord, Object oldId, Object newRecord, Object newId) throws FlowException, LocalizationException {
+											return RefreshMode.DEFAULT;
+										}
+								
+										@Override
+										public RefreshMode onField(Object inst, Object id, String fieldName, Object oldValue) throws FlowException, LocalizationException {
+											return RefreshMode.DEFAULT;
+										}
+								
+										@Override
+										public RefreshMode onAction(Object inst, Object id, String actionName, Object parameter) throws FlowException, LocalizationException {
+											return RefreshMode.DEFAULT;
+										}
+								
+										@Override
+										public LoggerFacade getLogger() {
+											return null;
+										}
+									};
+	
 	
 	private final Localizer			localizer;
 	private final CountDownLatch	latch;
+	private final Settings			settings;
 	private final InetSocketAddress	addr;
 	private final JStateString		state;
 	private final JPanel			content = new JPanel(new BorderLayout());
@@ -99,21 +131,23 @@ public class Application extends JFrame implements LocaleChangeListener {
 	private final ViewerAsTable		rightContainer = new ViewerAsTable();
 	private final FileViewer		viewer = new FileViewer();	
 	private final FileEditor		editor = new FileEditor();	
-	private final CommandString		commandString = new CommandString();
+	private final CommandString		commandString = new CommandString(console);
 	private final JPanel			bottomArea = new JPanel(new GridLayout(2,1));
 	private final JMenuBar			menu;
 	
 	private int						currentState = STATE_ORDINAL;
 	
 	
-	public Application(final ContentMetadataInterface model, final CountDownLatch latch, final InetSocketAddress addr) throws IOException, LocalizationException {
+	public Application(final Localizer parent, final ContentMetadataInterface model, final CountDownLatch latch, final InetSocketAddress addr) throws IOException, LocalizationException {
 		this.latch = latch;
 		this.addr = addr;
 		this.localizer = LocalizerFactory.getLocalizer(model.getRoot().getLocalizerAssociated());
 		this.state = new JStateString(this.localizer);
 		this.state.setBorder(new LineBorder(Color.BLACK));
 		this.menu = SwingModelUtils.toMenuEntity(model.byUIPath(URI.create(ContentMetadataInterface.UI_SCHEME+":/model/navigation.top.mainmenu")),JMenuBar.class);
-		
+		this.settings = new Settings(state);
+
+		parent.push(localizer);
 		content.setOpaque(true);
 		setContentPane(content);
 		
@@ -308,17 +342,24 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/settings.system")
 	private void systemSettings() {
-		
+		try{final AutoBuiltForm<SystemSettings>	form = new AutoBuiltForm<>(localizer,settings.systemSettings,settings.systemSettings);
+			
+			form.setPreferredSize(new Dimension(300,200));
+			AutoBuiltForm.ask(this,localizer,form);
+		} catch (LocalizationException | IllegalArgumentException | NullPointerException | ContentException e) {
+			state.message(Severity.error,e,"Error on parameter settings: "+e.getMessage());
+		}
 	}
 	
 	@OnAction("action:/settings.panel")
 	private void panelSettings() {
+		try{final AutoBuiltForm<PanelSettings>	form = new AutoBuiltForm<>(localizer,settings.panelSettings,settings.panelSettings);
 		
-	}
-	
-	@OnAction("action:/settings.lang")
-	private void langSettings() {
-		
+			form.setPreferredSize(new Dimension(400,150));
+			AutoBuiltForm.ask(this,localizer,form);
+		} catch (LocalizationException | IllegalArgumentException | NullPointerException | ContentException e) {
+			state.message(Severity.error,e,"Error on parameter settings: "+e.getMessage());
+		}
 	}
 	
 	@OnAction("action:/settings.viewer")
@@ -343,7 +384,13 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/settings.confirm")
 	private void confirmSettings() {
-		
+		try{final AutoBuiltForm<Confirms>	form = new AutoBuiltForm<>(localizer,settings.confirms,settings.confirms);
+			
+			form.setPreferredSize(new Dimension(300,200));
+			AutoBuiltForm.ask(this,localizer,form);
+		} catch (LocalizationException | IllegalArgumentException | NullPointerException | ContentException e) {
+			state.message(Severity.error,e,"Error on parameter settings: "+e.getMessage());
+		}
 	}
 	
 	@OnAction("action:/settings.save")
@@ -455,11 +502,12 @@ public class Application extends JFrame implements LocaleChangeListener {
 		
 		try(final InputStream		is = Application.class.getResourceAsStream("application.xml");
 			final LoggerFacade		log = new SystemErrLoggerFacade();
+			final Localizer			parent = new PureLibLocalizer();
 			final HelpService		hs = new HelpService(log, new SubstitutableProperties(props))) {
 			final CountDownLatch 	latch = new CountDownLatch(1);
 			
 			hs.start();
-			new Application(ContentModelFactory.forXmlDescription(is),latch,new InetSocketAddress("localhost",ap.getValue(ARG_PORT,Integer.class))).setVisible(true);
+			new Application(parent,ContentModelFactory.forXmlDescription(is),latch,new InetSocketAddress("localhost",ap.getValue(ARG_PORT,Integer.class))).setVisible(true);
 			latch.await();
 			hs.stop();
 		}

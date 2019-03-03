@@ -8,6 +8,6 @@ public class ConsoleOutput extends Term {
 	private static final long serialVersionUID = -1376971596509593925L;
 	
 	public ConsoleOutput() {
-		super(80,25,Color.LIGHT_GRAY,Color.BLACK);
+		super(80,25,Color.WHITE,Color.BLACK);
 	}
 }

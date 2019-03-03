@@ -67,4 +67,6 @@ public class ViewerAsTable extends PseudoConsole implements FileContainer {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
 }
