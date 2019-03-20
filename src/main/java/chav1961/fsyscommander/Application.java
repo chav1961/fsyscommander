@@ -494,7 +494,7 @@ public class Application extends JFrame implements LocaleChangeListener {
 		setTitle(localizer.getValue(APPLICATION_TITLE));
 	}
 
-	public static void main(String[] args) throws ContentException, IOException, LocalizationException, PreparationException, InterruptedException {
+	public static void main(String[] args) throws ContentException, IOException, InterruptedException, NullPointerException, EnvironmentException {
 		final ArgParser		ap = new ApplicationArgParser().parse(args);
 		final Properties	props = Utils.mkProps(NanoServiceFactory.NANOSERVICE_PORT,ap.getValue(ARG_PORT,Integer.class).toString()
 												 ,NanoServiceFactory.NANOSERVICE_ROOT,ap.getValue(ARG_ROOT,URI.class).toString());
