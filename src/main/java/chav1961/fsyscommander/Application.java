@@ -6,38 +6,34 @@ import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.HeadlessException;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.Writer;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.HyperlinkEvent;
@@ -47,6 +43,7 @@ import chav1961.fsyscommander.Settings.Confirms;
 import chav1961.fsyscommander.Settings.PanelSettings;
 import chav1961.fsyscommander.Settings.SystemSettings;
 import chav1961.fsyscommander.help.HelpService;
+import chav1961.fsyscommander.interfaces.OrderingModes;
 import chav1961.purelib.basic.ArgParser;
 import chav1961.purelib.basic.PureLibSettings;
 import chav1961.purelib.basic.SubstitutableProperties;
@@ -56,23 +53,28 @@ import chav1961.purelib.basic.exceptions.ContentException;
 import chav1961.purelib.basic.exceptions.EnvironmentException;
 import chav1961.purelib.basic.exceptions.FlowException;
 import chav1961.purelib.basic.exceptions.LocalizationException;
-import chav1961.purelib.basic.exceptions.PreparationException;
+import chav1961.purelib.basic.exceptions.PrintingException;
 import chav1961.purelib.basic.interfaces.LoggerFacade;
 import chav1961.purelib.basic.interfaces.LoggerFacade.Severity;
-import chav1961.purelib.etc.HandlersTest;
+import chav1961.purelib.fsys.FileSystemFactory;
+import chav1961.purelib.fsys.interfaces.FileSystemInterface;
 import chav1961.purelib.i18n.LocalizerFactory;
 import chav1961.purelib.i18n.PureLibLocalizer;
 import chav1961.purelib.i18n.interfaces.Localizer;
 import chav1961.purelib.i18n.interfaces.Localizer.LocaleChangeListener;
+import chav1961.purelib.json.JsonSerializer;
 import chav1961.purelib.model.ContentModelFactory;
 import chav1961.purelib.model.interfaces.ContentMetadataInterface;
 import chav1961.purelib.nanoservice.NanoServiceFactory;
-import chav1961.purelib.ui.interfacers.FormManager;
-import chav1961.purelib.ui.interfacers.RefreshMode;
+import chav1961.purelib.streams.JsonStaxParser;
+import chav1961.purelib.streams.JsonStaxPrinter;
+import chav1961.purelib.ui.interfaces.FormManager;
+import chav1961.purelib.ui.interfaces.RefreshMode;
 import chav1961.purelib.ui.swing.AutoBuiltForm;
 import chav1961.purelib.ui.swing.SwingModelUtils;
 import chav1961.purelib.ui.swing.SwingUtils;
 import chav1961.purelib.ui.swing.interfaces.OnAction;
+import chav1961.purelib.ui.swing.useful.JFileSystemChanger;
 import chav1961.purelib.ui.swing.useful.JLocalizedOptionPane;
 import chav1961.purelib.ui.swing.useful.JStateString;
 
@@ -121,6 +123,8 @@ public class Application extends JFrame implements LocaleChangeListener {
 	private final Localizer			localizer;
 	private final CountDownLatch	latch;
 	private final Settings			settings;
+	private final File				settingsFile = new File(".fsyscommander");
+	private final JsonSerializer<Settings>	ser; 
 	private final InetSocketAddress	addr;
 	private final JStateString		state;
 	private final JPanel			content = new JPanel(new BorderLayout());
@@ -136,7 +140,8 @@ public class Application extends JFrame implements LocaleChangeListener {
 	private final JMenuBar			menu;
 	
 	private int						currentState = STATE_ORDINAL;
-	
+	private FileSystemInterface		leftFsi = null, rightFsi = null;
+	private OrderingModes			leftOrdering = OrderingModes.BY_NAME_ASC, rightOrdering = OrderingModes.BY_NAME_ASC;  
 	
 	public Application(final Localizer parent, final ContentMetadataInterface model, final CountDownLatch latch, final InetSocketAddress addr) throws IOException, LocalizationException {
 		this.latch = latch;
@@ -145,8 +150,31 @@ public class Application extends JFrame implements LocaleChangeListener {
 		this.state = new JStateString(this.localizer);
 		this.state.setBorder(new LineBorder(Color.BLACK));
 		this.menu = SwingModelUtils.toMenuEntity(model.byUIPath(URI.create(ContentMetadataInterface.UI_SCHEME+":/model/navigation.top.mainmenu")),JMenuBar.class);
-		this.settings = new Settings(state);
 
+		try{this.ser = JsonSerializer.buildSerializer(Settings.class);
+		} catch (EnvironmentException exc) {
+			state.message(Severity.error,exc,"Error on builing JSON serializator: "+exc.getMessage());
+			throw new IOException(exc);
+		}
+
+//		if (settingsFile.exists() && settingsFile.isFile() && settingsFile.canRead()) {
+//			try(final InputStream		is = new FileInputStream(settingsFile);
+//				final Reader			rdr = new InputStreamReader(is,"UTF-8");
+//				final JsonStaxParser	pars = new JsonStaxParser(rdr)) {
+//				
+//				pars.next();
+//				
+//				try{this.settings = ser.deserialize(pars);
+//				} catch (ContentException exc) {
+//					state.message(Severity.error,exc,"Error on loading previous settings: "+exc.getMessage());
+//					throw new IOException(exc);
+//				}
+//			}
+//		}
+//		else {
+			this.settings = new Settings(state);
+//		}
+		
 		parent.push(localizer);
 		content.setOpaque(true);
 		setContentPane(content);
@@ -214,8 +242,58 @@ public class Application extends JFrame implements LocaleChangeListener {
 	private void leftAsTree() {
 	}
 	
-	@OnAction("action:/left.sortModes")
-	private void leftSortModes() {
+	@OnAction("action:/left.sort.name.asc")
+	private void leftSortModesNameAsc() {
+		leftOrdering = OrderingModes.BY_NAME_ASC;
+		refreshLeftPanel();
+	}
+
+	@OnAction("action:/left.sort.ext.asc")
+	private void leftSortModesExtAsc() {
+		leftOrdering = OrderingModes.BY_EXTENSION_ASC;
+		refreshLeftPanel();
+	}
+	
+	@OnAction("action:/left.sort.date.asc")
+	private void leftSortModesDateAsc() {
+		leftOrdering = OrderingModes.BY_DATE_ASC;
+		refreshLeftPanel();
+	}
+
+	@OnAction("action:/left.sort.size.asc")
+	private void leftSortModesSizeAsc() {
+		leftOrdering = OrderingModes.BY_SIZE_ASC;
+		refreshLeftPanel();
+	}
+
+	@OnAction("action:/left.sort.name.desc")
+	private void leftSortModesNameDesc() {
+		leftOrdering = OrderingModes.BY_NAME_DESC;
+		refreshLeftPanel();
+	}
+
+	@OnAction("action:/left.sort.ext.desc")
+	private void leftSortModesExtDesc() {
+		leftOrdering = OrderingModes.BY_EXTENSION_DESC;
+		refreshLeftPanel();
+	}
+	
+	@OnAction("action:/left.sort.date.desc")
+	private void leftSortModesDateDesc() {
+		leftOrdering = OrderingModes.BY_DATE_DESC;
+		refreshLeftPanel();
+	}
+
+	@OnAction("action:/left.sort.size.desc")
+	private void leftSortModesSizeDesc() {
+		leftOrdering = OrderingModes.BY_SIZE_DESC;
+		refreshLeftPanel();
+	}
+
+	@OnAction("action:/left.sort.unordered")
+	private void leftSortModesUnordered() {
+		leftOrdering = OrderingModes.UNORDERED;
+		refreshLeftPanel();
 	}
 	
 	@OnAction("action:/left.onoffpanel")
@@ -225,7 +303,24 @@ public class Application extends JFrame implements LocaleChangeListener {
 
 	@OnAction("action:/left.changeFS")
 	private void leftChangeFS() {
+		try{final URI	newFsi = JFileSystemChanger.ask(this,localizer);
+		
+			if (newFsi != null) {
+				if (leftFsi != null) {
+					leftFsi.close();
+				}
+				leftFsi = FileSystemFactory.createFileSystem(newFsi);
+			}
+		} catch (LocalizationException | ContentException | IOException e) {
+			state.message(Severity.error,e,"Error on change file system: "+e.getMessage());
+		}
 	}
+
+	private void refreshLeftPanel() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 	/*
 	 * Files
@@ -301,6 +396,20 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/files.exit")
 	private void fileExit() {
+		if (leftFsi != null) {
+			try{leftFsi.close();
+			    leftFsi = null;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		if (rightFsi != null) {
+			try{rightFsi.close();
+				rightFsi = null;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		setVisible(false);
 		dispose();
 		latch.countDown();
@@ -395,7 +504,16 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/settings.save")
 	private void saveSettings() {
-		
+		try(final OutputStream			os = new FileOutputStream(".fsyscommander");
+			final Writer				wr = new OutputStreamWriter(os,"UTF-8");
+			final JsonStaxPrinter		prn = new JsonStaxPrinter(wr)) {
+				
+			ser.serialize(settings,prn);
+			prn.flush();
+			state.message(Severity.info,"Current settings saved successfully");
+		} catch (PrintingException | IOException exc) {
+			state.message(Severity.error,exc,"Error on store settings "+exc.getMessage());
+		}
 	}
 
 	/*
@@ -412,10 +530,60 @@ public class Application extends JFrame implements LocaleChangeListener {
 		
 	}
 	
-	@OnAction("action:/right.sortModes")
-	private void rightSortModes() {
-		
+	@OnAction("action:/right.sort.name.asc")
+	private void rightSortModesNameAsc() {
+		rightOrdering = OrderingModes.BY_NAME_ASC;
+		refreshRightPanel();
 	}
+
+	@OnAction("action:/right.sort.ext.asc")
+	private void rightSortModesExtAsc() {
+		rightOrdering = OrderingModes.BY_EXTENSION_ASC;
+		refreshRightPanel();
+	}
+	
+	@OnAction("action:/right.sort.date.asc")
+	private void rightSortModesDateAsc() {
+		rightOrdering = OrderingModes.BY_DATE_ASC;
+		refreshRightPanel();
+	}
+
+	@OnAction("action:/right.sort.size.asc")
+	private void rightSortModesSizeAsc() {
+		rightOrdering = OrderingModes.BY_SIZE_ASC;
+		refreshRightPanel();
+	}
+
+	@OnAction("action:/right.sort.name.desc")
+	private void rightSortModesNameDesc() {
+		rightOrdering = OrderingModes.BY_NAME_DESC;
+		refreshRightPanel();
+	}
+
+	@OnAction("action:/right.sort.ext.desc")
+	private void rightSortModesExtDesc() {
+		rightOrdering = OrderingModes.BY_EXTENSION_DESC;
+		refreshRightPanel();
+	}
+	
+	@OnAction("action:/right.sort.date.desc")
+	private void rightSortModesDateDesc() {
+		rightOrdering = OrderingModes.BY_DATE_DESC;
+		refreshRightPanel();
+	}
+
+	@OnAction("action:/right.sort.size.desc")
+	private void rightSortModesSizeDesc() {
+		rightOrdering = OrderingModes.BY_SIZE_DESC;
+		refreshRightPanel();
+	}
+
+	@OnAction("action:/right.sort.unordered")
+	private void rightSortModesUnordered() {
+		rightOrdering = OrderingModes.UNORDERED;
+		refreshRightPanel();
+	}
+	
 	
 	@OnAction("action:/right.onoffpanel")
 	private void rightOnOff() {
@@ -424,9 +592,24 @@ public class Application extends JFrame implements LocaleChangeListener {
 
 	@OnAction("action:/right.changeFS")
 	private void rightChangeFS() {
-		
+		try{final URI	newFsi = JFileSystemChanger.ask(this,localizer);
+			
+			if (newFsi != null) {
+				if (rightFsi != null) {
+					rightFsi.close();
+				}
+				rightFsi = FileSystemFactory.createFileSystem(newFsi);
+			}
+		} catch (LocalizationException | ContentException | IOException e) {
+			state.message(Severity.error,e,"Error on change file system: "+e.getMessage());
+		}
 	}
 
+	private void refreshRightPanel() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/*
 	 * Help
 	 */

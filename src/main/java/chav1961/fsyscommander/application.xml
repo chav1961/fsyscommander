@@ -6,7 +6,19 @@
 			<app:item name="menu.left.asTable" caption="menu.left.asTable" tooltip="menu.left.asTable.tt" action="left.asTable"/>
 			<app:item name="menu.left.asTree" caption="menu.left.asTree" tooltip="menu.left.asTree.tt" action="left.asTree"/>
 			<app:separator/>
-			<app:item name="menu.left.sortModes" caption="menu.left.sortModes" tooltip="menu.left.sortModes.tt" action="left.sortModes"/>
+			<app:submenu name="menu.left.sortModes" caption="menu.left.sortModes" tooltip="menu.left.sortModes.tt">
+				<app:item name="menu.left.sortModes.name.asc" caption="menu.left.sortModes.name.asc" tooltip="menu.left.sortModes.name.asc.tt" action="left.sort.name.asc" group="left.ordering"/>
+				<app:item name="menu.left.sortModes.ext.asc" caption="menu.left.sortModes.ext.asc" tooltip="menu.left.sortModes.ext.asc.tt" action="left.sort.ext.asc" group="left.ordering"/>
+				<app:item name="menu.left.sortModes.date.asc" caption="menu.left.sortModes.date.asc" tooltip="menu.left.sortModes.date.asc.tt" action="left.sort.date.asc" group="left.ordering"/>
+				<app:item name="menu.left.sortModes.size.asc" caption="menu.left.sortModes.size.asc" tooltip="menu.left.sortModes.size.asc.tt" action="left.sort.size.asc" group="left.ordering"/>
+				<app:separator/>
+				<app:item name="menu.left.sortModes.name.desc" caption="menu.left.sortModes.name.desc" tooltip="menu.left.sortModes.name.desc.tt" action="left.sort.name.desc" group="left.ordering"/>
+				<app:item name="menu.left.sortModes.ext.desc" caption="menu.left.sortModes.ext.desc" tooltip="menu.left.sortModes.ext.desc.tt" action="left.sort.ext.desc" group="left.ordering"/>
+				<app:item name="menu.left.sortModes.date.desc" caption="menu.left.sortModes.date.desc" tooltip="menu.left.sortModes.date.desc.tt" action="left.sort.date.desc" group="left.ordering"/>
+				<app:item name="menu.left.sortModes.size.desc" caption="menu.left.sortModes.size.desc" tooltip="menu.left.sortModes.size.desc.tt" action="left.sort.size.desc" group="left.ordering"/>
+				<app:separator/>
+				<app:item name="menu.left.sortModes.unordered" caption="menu.left.sortModes.unordered" tooltip="menu.left.sortModes.unordered.tt" action="left.sort.unordered" group="left.ordering"/>
+			</app:submenu>
 			<app:item name="menu.left.onoffpanel" caption="menu.left.onoffpanel" tooltip="menu.left.onoffpanel.tt" action="left.onoffpanel"/>
 			<app:item name="menu.left.changeFS" caption="menu.left.changeFS" tooltip="menu.left.changeFS.tt" action="left.changeFS"/>
 		</app:submenu>
@@ -55,7 +67,19 @@
 			<app:item name="menu.right.asTable" caption="menu.right.asTable" tooltip="menu.right.asTable.tt" action="right.asTable"/>
 			<app:item name="menu.right.asTree" caption="menu.right.asTree" tooltip="menu.right.asTree.tt" action="right.asTree"/>
 			<app:separator/>
-			<app:item name="menu.right.sortModes" caption="menu.right.sortModes" tooltip="menu.right.sortModes.tt" action="right.sortModes"/>
+			<app:submenu name="menu.right.sortModes" caption="menu.right.sortModes" tooltip="menu.right.sortModes.tt">
+				<app:item name="menu.right.sortModes.name.asc" caption="menu.right.sortModes.name.asc" tooltip="menu.right.sortModes.name.asc.tt" action="right.sort.name.asc" group="right.ordering"/>
+				<app:item name="menu.right.sortModes.ext.asc" caption="menu.right.sortModes.ext.asc" tooltip="menu.right.sortModes.ext.asc.tt" action="right.sort.ext.asc" group="right.ordering"/>
+				<app:item name="menu.right.sortModes.date.asc" caption="menu.right.sortModes.date.asc" tooltip="menu.right.sortModes.date.asc.tt" action="right.sort.date.asc" group="right.ordering"/>
+				<app:item name="menu.right.sortModes.size.asc" caption="menu.right.sortModes.size.asc" tooltip="menu.right.sortModes.size.asc.tt" action="right.sort.size.asc" group="right.ordering"/>
+				<app:separator/>
+				<app:item name="menu.right.sortModes.name.desc" caption="menu.right.sortModes.name.desc" tooltip="menu.right.sortModes.name.desc.tt" action="right.sort.name.desc" group="right.ordering"/>
+				<app:item name="menu.right.sortModes.ext.desc" caption="menu.right.sortModes.ext.desc" tooltip="menu.right.sortModes.ext.desc.tt" action="right.sort.ext.desc" group="right.ordering"/>
+				<app:item name="menu.right.sortModes.date.desc" caption="menu.right.sortModes.date.desc" tooltip="menu.right.sortModes.date.desc.tt" action="right.sort.date.desc" group="right.ordering"/>
+				<app:item name="menu.right.sortModes.size.desc" caption="menu.right.sortModes.size.desc" tooltip="menu.right.sortModes.size.desc.tt" action="right.sort.size.desc" group="right.ordering"/>
+				<app:separator/>
+				<app:item name="menu.right.sortModes.unordered" caption="menu.right.sortModes.unordered" tooltip="menu.right.sortModes.unordered.tt" action="right.sort.unordered"/>
+			</app:submenu>
 			<app:item name="menu.right.onoffpanel" caption="menu.right.onoffpanel" tooltip="menu.right.onoffpanel.tt" action="right.onoffpanel"/>
 			<app:item name="menu.right.changeFS" caption="menu.right.changeFS" tooltip="menu.right.changeFS.tt" action="right.changeFS"/>
 		</app:submenu>
