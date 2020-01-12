@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<localization xmlns="http://www.i18n.purelib.chav1961.ru/">
+	<lang name="en">
+<!-- Localization for application titles --> 
+		<key name="Application.title">(c) 2019 A.V.Chernomyrdin aka chav1961. File system commander V.R.=0.0.1</key>
+		<key name="Application.help.title">About...</key>
+		<key name="Application.help.content">uri(aboutApplication.cre)</key>
+
+<!-- Localization for application menu -->
+		<key name="menu.left">Left</key>
+		<key name="menu.left.tt">Left panel settings</key>
+
+		<key name="menu.left.asTable">As table...</key>
+		<key name="menu.left.asTable.tt">Show left panel as table</key>
+		<key name="menu.left.asTree">As tree...</key>
+		<key name="menu.left.asTree.tt">Show left panel as tree</key>
+		<key name="menu.left.sortModes">Sort modes</key>
+		<key name="menu.left.sortModes.tt">Sort left panel content</key>
+		<key name="menu.left.sortModes.name.asc">Name (asc)</key>
+		<key name="menu.left.sortModes.name.asc.tt">Order by name ascending</key>
+		<key name="menu.left.sortModes.ext.asc">Extension (asc)</key>
+		<key name="menu.left.sortModes.ext.asc.tt">Order by extension ascending</key>
+		<key name="menu.left.sortModes.date.asc">Creation date (asc)</key>
+		<key name="menu.left.sortModes.date.asc.tt">Order by creation date ascending</key>
+		<key name="menu.left.sortModes.size.asc">Size (asc)</key>
+		<key name="menu.left.sortModes.size.asc.tt">Order by size ascending</key>
+		<key name="menu.left.sortModes.name.desc">Name (desc)</key>
+		<key name="menu.left.sortModes.name.desc.tt">Order by name descending</key>
+		<key name="menu.left.sortModes.ext.desc">Extension (desc)</key>
+		<key name="menu.left.sortModes.ext.desc.tt">Order by extension descending</key>
+		<key name="menu.left.sortModes.date.desc">Creation date (desc)</key>
+		<key name="menu.left.sortModes.date.desc.tt">Order by creation date descending</key>
+		<key name="menu.left.sortModes.size.desc">Size (desc)</key>
+		<key name="menu.left.sortModes.size.desc.tt">Order by size descending</key>
+		<key name="menu.left.sortModes.unordered">Unordered</key>
+		<key name="menu.left.sortModes.unordered.tt">Natural order</key>
+		<key name="menu.left.onoffpanel">On/off panel</key>
+		<key name="menu.left.onoffpanel.tt">On and off left panel</key>
+		<key name="menu.left.changeFS">Change file system</key>
+		<key name="menu.left.changeFS.tt">Select other file system for the left panel</key>
+
+		<key name="menu.files">Files</key>
+		<key name="menu.files.tt">File/directory manipulations</key>
+
+		<key name="menu.files.view">View file</key>
+		<key name="menu.files.view.tt">View file content</key>
+		<key name="menu.files.edit">Edit file</key>
+		<key name="menu.files.edit.tt">Edit file content</key>
+		<key name="menu.files.copy">Copy file/dir</key>
+		<key name="menu.files.copy.tt">Copy file(s)/directory(es)</key>
+		<key name="menu.files.move">Move file/dir</key>
+		<key name="menu.files.move.tt">Move or rename file(s)/directory(es)</key>
+		<key name="menu.files.mkdir">New dir</key>
+		<key name="menu.files.mkdir.tt">Create new directory</key>
+		<key name="menu.files.remove">Delete file/dir</key>
+		<key name="menu.files.remove.tt">Delete file(s)/directory(es)</key>
+		<key name="menu.files.mount">Mount</key>
+		<key name="menu.files.mount.tt">Mount new file system to directory selected</key>
+		<key name="menu.files.unmount">Unmount</key>
+		<key name="menu.files.unmount.tt">Unmount file system from directory</key>
+		<key name="menu.files.select">Select</key>
+		<key name="menu.files.select.tt">Select content for group operations</key>
+		<key name="menu.files.unselect">Unselect</key>
+		<key name="menu.files.unselect.tt">Unselect content for group operatios</key> 
+		<key name="menu.files.invselect">Invert selection</key>
+		<key name="menu.files.invselect.tt">Invert selections for file(s)/directory(es)</key>
+		<key name="menu.files.restselect">Restore</key>
+		<key name="menu.files.restselect.tt">Restore selection for file(s)/directory(es)</key>
+		<key name="menu.files.exit">Exit</key>
+		<key name="menu.files.exit.tt">Exit program</key>
+
+		<key name="menu.commands">Commands</key>
+		<key name="menu.commands.tt">Execute commands with file(s)/directory(es) content</key>
+
+		<key name="menu.commands.findfile">Find file</key>
+		<key name="menu.commands.findfile.tt">Find file by it's type and content</key>
+		<key name="menu.commands.findfolders">Find folders</key>
+		<key name="menu.commands.findfolders.tt">Find file by it's type and content</key>
+		<key name="menu.commands.comparefolders">Compare folders</key>
+		<key name="menu.commands.comparefolders.tt">Compare folders content for equality</key>
+		<key name="menu.commands.swappanels">Swap panels</key>
+		<key name="menu.commands.swappanels.tt">Change left and right panels</key>
+		<key name="menu.commands.onoffpanels">On/Off panels</key>
+		<key name="menu.commands.onoffpanels.tt">On and off current panel</key>
+		<key name="menu.commands.escape">Escape</key>
+		<key name="menu.commands.escape.tt">Escape from current mode</key>
+
+		<key name="menu.settings">Settings</key>
+		<key name="menu.settings.tt">Program settings</key>
+
+		<key name="menu.settings.system">System settings</key>
+		<key name="menu.settings.system.tt">System settings</key>
+		<key name="menu.settings.panel">Panel(s) settings</key>
+		<key name="menu.settings.panel.tt">Panel(s) settings</key>
+		<key name="menu.settings.viewer">Viewer settings</key>
+		<key name="menu.settings.viewer.tt">Viewer settings</key>
+		<key name="menu.settings.editor">Editor settings</key>
+		<key name="menu.settings.editor.tt">Editor settings</key>
+		<key name="menu.settings.colors">Colors settings</key>
+		<key name="menu.settings.colors.tt">Colors settings</key>
+		<key name="menu.settings.highlighting">Highlighting</key>
+		<key name="menu.settings.highlighting.tt">File(s)/directory(es) highlighting settings</key> 
+		<key name="menu.settings.confirm">Confirmation</key>
+		<key name="menu.settings.confirm.tt">Confirmation settings</key>
+		<key name="menu.settings.save">Save settings</key>
+		<key name="menu.settings.save.tt">Save settings</key>
+
+		<key name="menu.right">Right</key>
+		<key name="menu.right.tt">Right panel settings</key>
+
+		<key name="menu.right.asTable">As table...</key>
+		<key name="menu.right.asTable.tt">Show right panel as table</key>
+		<key name="menu.right.asTree">As tree...</key>
+		<key name="menu.right.asTree.tt">Show right panel as tree</key>
+		<key name="menu.right.sortModes">Sort modes</key>
+		<key name="menu.right.sortModes.tt">Sort right panel content</key>
+		<key name="menu.right.sortModes.name.asc">Name (asc)</key>
+		<key name="menu.right.sortModes.name.asc.tt">Order by name ascending</key>
+		<key name="menu.right.sortModes.ext.asc">Extension (asc)</key>
+		<key name="menu.right.sortModes.ext.asc.tt">Order by extension ascending</key>
+		<key name="menu.right.sortModes.date.asc">Creation date (asc)</key>
+		<key name="menu.right.sortModes.date.asc.tt">Order by creation date ascending</key>
+		<key name="menu.right.sortModes.size.asc">Size (asc)</key>
+		<key name="menu.right.sortModes.size.asc.tt">Order by size ascending</key>
+		<key name="menu.right.sortModes.name.desc">Name (desc)</key>
+		<key name="menu.right.sortModes.name.desc.tt">Order by name descending</key>
+		<key name="menu.right.sortModes.ext.desc">Extension (desc)</key>
+		<key name="menu.right.sortModes.ext.desc.tt">Order by extension descending</key>
+		<key name="menu.right.sortModes.date.desc">Creation date (desc)</key>
+		<key name="menu.right.sortModes.date.desc.tt">Order by creation date descending</key>
+		<key name="menu.right.sortModes.size.desc">Size (desc)</key>
+		<key name="menu.right.sortModes.size.desc.tt">Order by size descending</key>
+		<key name="menu.right.sortModes.unordered">Unordered</key>
+		<key name="menu.right.sortModes.unordered.tt">Natural order</key>
+		<key name="menu.right.onoffpanel">On/off panel</key>
+		<key name="menu.right.onoffpanel.tt">On and off right panel</key>
+		<key name="menu.right.changeFS">Change file system</key>
+		<key name="menu.right.changeFS.tt">Select other file system for the right panel</key>
+
+		<key name="menu.help">Help</key>
+		<key name="menu.help.tt">Help</key>
+
+		<key name="menu.help.guide">Guide</key>
+		<key name="menu.help.guide.tt">User guide</key> 
+		<key name="menu.help.update">Update</key>
+		<key name="menu.help.update.tt">Take new version of the program</key>
+		<key name="menu.help.about">About</key>
+		<key name="menu.help.about.tt">Information about the program</key>
+
+<!-- Localization for settings -->
+		<key name="settings.system">System settings</key>
+		<key name="settings.system.tt">System settings for file systems commander</key>
+		<key name="settings.system.currentLang">Current language</key>
+		<key name="settings.system.currentLang.tt">Language to use on all application elements</key>
+		<key name="settings.system.upperCaseOnCreation">Upper case on creation</key>
+		<key name="settings.system.upperCaseOnCreation.tt">Convert all names creating to uper case</key>
+		<key name="settings.system.saveCommandHistory">Save commands history</key>
+		<key name="settings.system.saveCommandHistory.tt">Save all the commands typed in history log.</key>
+		<key name="settings.system.useMimeTypes">Use MIME types</key>
+		<key name="settings.system.useMimeTypes.tt">Try to define file's content by it's MIME type</key>
+		<key name="settings.system.autoSave">Auto save settings</key>
+		<key name="settings.system.autoSave.tt">Save settings changes without questions</key> 
+
+		<key name="settings.panels">Panel settings</key>
+		<key name="settings.panels.tt">Panel settings for file system commander</key>
+		<key name="settings.panels.columns">Number of columns</key>
+		<key name="settings.panels.columns.tt">Number of columns in the panel</key>
+		<key name="settings.panels.allowFolderSelection">Allow folder selection</key>
+		<key name="settings.panels.allowFolderSelection.tt">Allow group selection of the folder</key>
+		<key name="settings.panels.showTitle">Show title</key>
+		<key name="settings.panels.showTitle.tt">Show column titles</key>
+		<key name="settings.panels.showState">Show state string</key>
+		<key name="settings.panels.showState.tt">Show state string with current file</key>
+
+		<key name="settings.confirms">Confirms</key>
+		<key name="settings.confirms.tt">Confirms settings for file systems commander</key>
+		<key name="settings.confirms.onCopy">Confirm on copy</key>
+		<key name="settings.confirms.onCopy.tt">Request confirm to copy one item</key>
+		<key name="settings.confirms.onBulkCopy">Confirm on bulk copy</key>
+		<key name="settings.confirms.onBulkCopy.tt"> Request confirm to copy set of items</key>
+		<key name="settings.confirms.onMove">Confirm on move</key>
+		<key name="settings.confirms.onMove.tt">Request confirm to move one item</key>
+		<key name="settings.confirms.onBulkMove">Confirm on bulk move</key>
+		<key name="settings.confirms.onBulkMove.tt">Request confirm to move set of items</key>
+		<key name="settings.confirms.onExit">Confirm on exit</key>
+		<key name="settings.confirms.onExit.tt">Request confirm to exit from file systems commander</key>
+	</lang>
+	<lang name="ru">
+<!-- Localization for application titles --> 
+		<key name="Application.title">(c) 2019 A.V.Chernomyrdin aka chav1961. File system commander V.R.=0.0.1</key>
+		
+<!-- Локализация заголовков приложения -->
+		<key name="Application.title">(c) 2019 A.V.Chernomyrdin aka chav1961. File system commander V.R.=0.0.1</key>
+		<key name="Application.help.title">О программе...</key>
+		<key name="Application.help.content">uri(aboutApplication.cre)</key>
+
+<!-- Локализация меню приложения -->
+		<key name="menu.left">Левая</key>
+		<key name="menu.left.tt">Настройки левой панели</key>
+
+		<key name="menu.left.asTable">В виде таблицы...</key>
+		<key name="menu.left.asTable.tt">Показывать левую панель в виде таблицы</key>
+		<key name="menu.left.asTree">В виде дерева...</key>
+		<key name="menu.left.asTree.tt">Показывать левую панель в виде дерева</key>
+		<key name="menu.left.sortModes">Способ сортировки</key>
+		<key name="menu.left.sortModes.tt">Сортировка содержимого левой панели</key>
+		<key name="menu.left.sortModes.name.asc">Имя (возр)</key>
+		<key name="menu.left.sortModes.name.asc.tt">Сортировка по возрастанию имени</key>
+		<key name="menu.left.sortModes.ext.asc">Расширение (возр)</key>
+		<key name="menu.left.sortModes.ext.asc.tt">Сортировка по возрастанию расширения</key>
+		<key name="menu.left.sortModes.date.asc">Дата созд (возр)</key>
+		<key name="menu.left.sortModes.date.asc.tt">Сортировка по возрастанию даты создания</key>
+		<key name="menu.left.sortModes.size.asc">Размер (возр)</key>
+		<key name="menu.left.sortModes.size.asc.tt">Сортировка по возрастанию размера</key>
+		<key name="menu.left.sortModes.name.desc">Имя (убыв)</key>
+		<key name="menu.left.sortModes.name.desc.tt">Сортировка по убыванию имени</key>
+		<key name="menu.left.sortModes.ext.desc">Расширение (убыв)</key>
+		<key name="menu.left.sortModes.ext.desc.tt">Сортировка по убыванию расширения</key>
+		<key name="menu.left.sortModes.date.desc">Дата созд (убыв)</key>
+		<key name="menu.left.sortModes.date.desc.tt">Сортировка по убыванию даты создания</key>
+		<key name="menu.left.sortModes.size.desc">Размер (убыв)</key>
+		<key name="menu.left.sortModes.size.desc.tt">Сортировка по убыванию размера</key>
+		<key name="menu.left.sortModes.unordered">Без сортировки</key>
+		<key name="menu.left.sortModes.unordered.tt">Список выдается в фактическом порядке</key>
+		<key name="menu.left.onoffpanel">Вкл/выкл панель</key>
+		<key name="menu.left.onoffpanel.tt">Включение/выключение левой панели</key>
+		<key name="menu.left.changeFS">Смена файловой системы</key>
+		<key name="menu.left.changeFS.tt">Выбрать другую файловую системы для левой панели</key>
+
+		<key name="menu.files">Файлы</key>
+		<key name="menu.files.tt">Манипуляции с файлами и папками</key>
+
+		<key name="menu.files.view">Просмотр</key>
+		<key name="menu.files.view.tt">Просмотр содержимого файла</key>
+		<key name="menu.files.edit">Редактирование</key>
+		<key name="menu.files.edit.tt">Редактирование содержимого файла</key>
+		<key name="menu.files.copy">Копирование</key>
+		<key name="menu.files.copy.tt">Копирование файлов и папок</key>
+		<key name="menu.files.move">Перенос</key>
+		<key name="menu.files.move.tt">Перенос или переименование файлов и папок</key>
+		<key name="menu.files.mkdir">Новая папка</key>
+		<key name="menu.files.mkdir.tt">Создать новую папку</key>
+		<key name="menu.files.remove">Удалить</key>
+		<key name="menu.files.remove.tt">Удаление файлов и папок</key>
+		<key name="menu.files.mount">Смонтировать</key>
+		<key name="menu.files.mount.tt">Смонтировать новую файловую систему на выбранную папку</key>
+		<key name="menu.files.unmount">Размонтировать</key>
+		<key name="menu.files.unmount.tt">РАзмонтировать файловую систему с папки</key>
+		<key name="menu.files.select">Пометить</key>
+		<key name="menu.files.select.tt">Пометить файлы/папки для групповой операции</key>
+		<key name="menu.files.unselect">Снять пометку</key>
+		<key name="menu.files.unselect.tt">Снять пометки с файлов/папок</key>
+		<key name="menu.files.invselect">Инверсия</key>
+		<key name="menu.files.invselect.tt">Инвертировать пометки на файлах/папках</key>
+		<key name="menu.files.restselect">Востановить</key>
+		<key name="menu.files.restselect.tt">Восстановить пометки на файлах/папках</key>
+		<key name="menu.files.exit">Выход</key>
+		<key name="menu.files.exit.tt">Завершить работу программы</key>
+
+		<key name="menu.commands">Команды</key>
+		<key name="menu.commands.tt">Выполнения команд над файлами/папками</key>
+
+		<key name="menu.commands.findfile">Найти файл</key>
+		<key name="menu.commands.findfile.tt">Найти файл по его типу и содержимому</key>
+		<key name="menu.commands.findfolders">Найти папку</key>
+		<key name="menu.commands.findfolders.tt">Найти папку по ее типу и содержимому</key>
+		<key name="menu.commands.comparefolders">Сравнитиь папки</key>
+		<key name="menu.commands.comparefolders.tt">Сравнить содержимое папок на "одинаковость"</key>
+		<key name="menu.commands.swappanels">Поменять панели</key>
+		<key name="menu.commands.swappanels.tt">Поменять содержимое левой и правой панелей</key>
+		<key name="menu.commands.onoffpanels">Вкл/выкл панелей</key>
+		<key name="menu.commands.onoffpanels.tt">Включить/отключить панели</key>
+		<key name="menu.commands.escape">Закончить</key>
+		<key name="menu.commands.escape.tt">Выйти из текущего режима</key>
+
+		<key name="menu.settings">Настройки</key>
+		<key name="menu.settings.tt">Настройки программы</key>
+
+		<key name="menu.settings.system">Системные...</key>
+		<key name="menu.settings.system.tt">Системные настройки</key>
+		<key name="menu.settings.panel">Панелей...</key>
+		<key name="menu.settings.panel.tt">Настройки панелей</key>
+		<key name="menu.settings.viewer">Просмотрщика...</key>
+		<key name="menu.settings.viewer.tt">Настройки просмотрщика</key>
+		<key name="menu.settings.editor">Редактора...</key>
+		<key name="menu.settings.editor.tt">Настройки редактора</key>
+		<key name="menu.settings.colors">Раскраски...</key>
+		<key name="menu.settings.colors.tt">Настройки цветов</key>
+		<key name="menu.settings.highlighting">Подсветки...</key>
+		<key name="menu.settings.highlighting.tt">Настройки подсветки файлов и папок</key> 
+		<key name="menu.settings.confirm">Подтверждений...</key>
+		<key name="menu.settings.confirm.tt">Настройки подтверждений операций</key> 
+		<key name="menu.settings.save">Сохранить настройки</key>
+		<key name="menu.settings.save.tt">Сохранение настроек</key>
+
+		<key name="menu.right">Правая</key>
+		<key name="menu.right.tt">Настройки правой панели</key>
+
+		<key name="menu.right.asTable">В виде таблицы...</key>
+		<key name="menu.right.asTable.tt">Показывать правую панель в виде таблицы</key>
+		<key name="menu.right.asTree">В виде дерева...</key>
+		<key name="menu.right.asTree.tt">Показывать правую панель в виде дерева</key>
+		<key name="menu.right.sortModes">Способ сортировки</key>
+		<key name="menu.right.sortModes.tt">Сортировка содержимого правой панели</key>
+		<key name="menu.right.sortModes.name.asc">Имя (возр)</key>
+		<key name="menu.right.sortModes.name.asc.tt">Сортировка по возрастанию имени</key>
+		<key name="menu.right.sortModes.ext.asc">Расширение (возр)</key>
+		<key name="menu.right.sortModes.ext.asc.tt">Сортировка по возрастанию расширения</key>
+		<key name="menu.right.sortModes.date.asc">Дата созд (возр)</key>
+		<key name="menu.right.sortModes.date.asc.tt">Сортировка по возрастанию даты создания</key>
+		<key name="menu.right.sortModes.size.asc">Размер (возр)</key>
+		<key name="menu.right.sortModes.size.asc.tt">Сортировка по возрастанию размера</key>
+		<key name="menu.right.sortModes.name.desc">Имя (убыв)</key>
+		<key name="menu.right.sortModes.name.desc.tt">Сортировка по убыванию имени</key>
+		<key name="menu.right.sortModes.ext.desc">Расширение (убыв)</key>
+		<key name="menu.right.sortModes.ext.desc.tt">Сортировка по убыванию расширения</key>
+		<key name="menu.right.sortModes.date.desc">Дата созд (убыв)</key>
+		<key name="menu.right.sortModes.date.desc.tt">Сортировка по убыванию даты создания</key>
+		<key name="menu.right.sortModes.size.desc">Размер (убыв)</key>
+		<key name="menu.right.sortModes.size.desc.tt">Сортировка по убыванию размера</key>
+		<key name="menu.right.sortModes.unordered">Без сортировки</key>
+		<key name="menu.right.sortModes.unordered.tt">Список выдается в фактическом порядке</key>
+		<key name="menu.right.onoffpanel">Вкл/выкл панель</key>
+		<key name="menu.right.onoffpanel.tt">Включение/выключение правой панели</key>
+		<key name="menu.right.changeFS">Смена файловой системы</key>
+		<key name="menu.right.changeFS.tt">Выбрать другую файловую системы для правой панели</key>
+
+		<key name="menu.help">Справка</key>
+		<key name="menu.help.tt">Справка и помощь</key>
+
+		<key name="menu.help.guide">Описание</key>
+		<key name="menu.help.guide.tt">Описание программы</key> 
+		<key name="menu.help.update">Обновления</key>
+		<key name="menu.help.update.tt">Обновить версию программы</key>
+		<key name="menu.help.about">О программе</key>
+		<key name="menu.help.about.tt">Информация о программе</key>
+
+<!-- Локализация настроек -->
+		<key name="settings.system">Системные настройки</key>
+		<key name="settings.system.tt">Системные настройки приложения</key>
+		<key name="settings.system.currentLang">Текущий язык</key>
+		<key name="settings.system.currentLang.tt">Язык, используемый для всех элементов приложения</key>
+		<key name="settings.system.upperCaseOnCreation">Загл.буквы при создании</key>
+		<key name="settings.system.upperCaseOnCreation.tt">Переводить имена файлов и папок в верхний регистр при создании</key>
+		<key name="settings.system.saveCommandHistory">Хранить историю команд</key>
+		<key name="settings.system.saveCommandHistory.tt">Сохранять все набранные команды в журнал</key>
+		<key name="settings.system.useMimeTypes">Пользоваться MIME</key>
+		<key name="settings.system.useMimeTypes.tt">Пытаться определить содержимое файлов по их MIME</key>
+		<key name="settings.system.autoSave">Автосохранение</key>
+		<key name="settings.system.autoSave.tt">Сохранять изменения настроек без лишних вопросов</key> 
+
+		<key name="settings.panels">Настройки панелей</key>
+		<key name="settings.panels.tt">Настройки панелей приложения</key>
+		<key name="settings.panels.columns">Число столбцов</key>
+		<key name="settings.panels.columns.tt">Число столбцов в панели</key> 
+		<key name="settings.panels.allowFolderSelection">Разр. групповой выбор дир.</key>
+		<key name="settings.panels.allowFolderSelection.tt">Разрешить выбирать директории в групповых операциях</key>
+		<key name="settings.panels.showTitle">Заголовки колонок</key>
+		<key name="settings.panels.showTitle.tt">Показывать заголовки колонок</key>
+		<key name="settings.panels.showState">Статусная строка</key>
+		<key name="settings.panels.showState.tt">Показывать строку с описанием текущего файла</key>
+
+		<key name="settings.confirms">Подтверждения</key>
+		<key name="settings.confirms.tt">Настройка подтверждений для приложения</key>
+		<key name="settings.confirms.onCopy">Подтверждать копирование</key>
+		<key name="settings.confirms.onCopy.tt">Требовать подтверждения при копировании одной сущности</key>
+		<key name="settings.confirms.onBulkCopy">Подтверждать групповое копирование</key>
+		<key name="settings.confirms.onBulkCopy.tt">Требовать подтверждения при копировании группы сущностей</key>
+		<key name="settings.confirms.onMove">Подтверждать перенос</key>
+		<key name="settings.confirms.onMove.tt">Требовать подтверждения при переносе одной сущности</key>
+		<key name="settings.confirms.onBulkMove">Подтверждать групповой перенос</key>
+		<key name="settings.confirms.onBulkMove.tt">Требовать подтверждения при переносе группы сущностей</key>
+		<key name="settings.confirms.onExit">Подтверждать выход</key>
+		<key name="settings.confirms.onExit.tt">Требовать подтверждения при выходе из приложения</key>
+	</lang>	
+</localization>
