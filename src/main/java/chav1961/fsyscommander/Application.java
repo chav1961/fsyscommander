@@ -71,7 +71,6 @@ import chav1961.purelib.streams.JsonStaxPrinter;
 import chav1961.purelib.ui.interfaces.FormManager;
 import chav1961.purelib.ui.interfaces.RefreshMode;
 import chav1961.purelib.ui.swing.AutoBuiltForm;
-import chav1961.purelib.ui.swing.SwingModelUtils;
 import chav1961.purelib.ui.swing.SwingUtils;
 import chav1961.purelib.ui.swing.interfaces.OnAction;
 import chav1961.purelib.ui.swing.useful.JFileSystemChanger;
@@ -149,7 +148,7 @@ public class Application extends JFrame implements LocaleChangeListener {
 		this.localizer = LocalizerFactory.getLocalizer(model.getRoot().getLocalizerAssociated());
 		this.state = new JStateString(this.localizer);
 		this.state.setBorder(new LineBorder(Color.BLACK));
-		this.menu = SwingModelUtils.toMenuEntity(model.byUIPath(URI.create(ContentMetadataInterface.UI_SCHEME+":/model/navigation.top.mainmenu")),JMenuBar.class);
+		this.menu = SwingUtils.toJComponent(model.byUIPath(URI.create(ContentMetadataInterface.UI_SCHEME+":/model/navigation.top.mainmenu")),JMenuBar.class);
 
 		try{this.ser = JsonSerializer.buildSerializer(Settings.class);
 		} catch (EnvironmentException exc) {
@@ -451,7 +450,8 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/settings.system")
 	private void systemSettings() {
-		try{final AutoBuiltForm<SystemSettings>	form = new AutoBuiltForm<>(localizer,settings.systemSettings,settings.systemSettings);
+		try{final ContentMetadataInterface		mdi = ContentModelFactory.forAnnotatedClass(settings.systemSettings.getClass());
+			final AutoBuiltForm<SystemSettings>	form = new AutoBuiltForm<>(mdi,localizer,settings.systemSettings,settings.systemSettings);
 			
 			form.setPreferredSize(new Dimension(300,200));
 			AutoBuiltForm.ask(this,localizer,form);
@@ -462,7 +462,8 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/settings.panel")
 	private void panelSettings() {
-		try{final AutoBuiltForm<PanelSettings>	form = new AutoBuiltForm<>(localizer,settings.panelSettings,settings.panelSettings);
+		try{final ContentMetadataInterface		mdi = ContentModelFactory.forAnnotatedClass(settings.panelSettings.getClass());
+			final AutoBuiltForm<PanelSettings>	form = new AutoBuiltForm<>(mdi,localizer,settings.panelSettings,settings.panelSettings);
 		
 			form.setPreferredSize(new Dimension(400,150));
 			AutoBuiltForm.ask(this,localizer,form);
@@ -493,7 +494,8 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/settings.confirm")
 	private void confirmSettings() {
-		try{final AutoBuiltForm<Confirms>	form = new AutoBuiltForm<>(localizer,settings.confirms,settings.confirms);
+		try{final ContentMetadataInterface	mdi = ContentModelFactory.forAnnotatedClass(settings.confirms.getClass());
+			final AutoBuiltForm<Confirms>	form = new AutoBuiltForm<>(mdi,localizer,settings.confirms,settings.confirms);
 			
 			form.setPreferredSize(new Dimension(300,200));
 			AutoBuiltForm.ask(this,localizer,form);
