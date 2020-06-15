@@ -11,4 +11,5 @@ module chav1961.fsyscommander {
 	requires jdk.javadoc;
 
 	opens chav1961.fsyscommander to chav1961.purelib;
+	opens chav1961.fsyscommander.settings to chav1961.purelib;
 }

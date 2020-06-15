@@ -1,5 +1,6 @@
 package chav1961.fsyscommander;
 
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -39,11 +40,10 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import chav1961.fsyscommander.Settings.Confirms;
-import chav1961.fsyscommander.Settings.PanelSettings;
-import chav1961.fsyscommander.Settings.SystemSettings;
 import chav1961.fsyscommander.help.HelpService;
 import chav1961.fsyscommander.interfaces.OrderingModes;
+import chav1961.fsyscommander.interfaces.Resettable;
+import chav1961.fsyscommander.settings.Settings;
 import chav1961.purelib.basic.ArgParser;
 import chav1961.purelib.basic.PureLibSettings;
 import chav1961.purelib.basic.SubstitutableProperties;
@@ -62,6 +62,7 @@ import chav1961.purelib.i18n.LocalizerFactory;
 import chav1961.purelib.i18n.PureLibLocalizer;
 import chav1961.purelib.i18n.interfaces.Localizer;
 import chav1961.purelib.i18n.interfaces.Localizer.LocaleChangeListener;
+import chav1961.purelib.i18n.interfaces.SupportedLanguages;
 import chav1961.purelib.json.JsonSerializer;
 import chav1961.purelib.model.ContentModelFactory;
 import chav1961.purelib.model.interfaces.ContentMetadataInterface;
@@ -76,18 +77,24 @@ import chav1961.purelib.ui.swing.interfaces.OnAction;
 import chav1961.purelib.ui.swing.useful.JFileSystemChanger;
 import chav1961.purelib.ui.swing.useful.JLocalizedOptionPane;
 import chav1961.purelib.ui.swing.useful.JStateString;
+import chav1961.purelib.ui.swing.useful.LocalizedFormatter;
 
 public class Application extends JFrame implements LocaleChangeListener {
 	private static final long 		serialVersionUID = -8313830909078065332L;
 	
 	public static final String		ARG_PORT = "port";
 	public static final String		ARG_ROOT = "root";
+
+	private static final String		SETTINGS_NAME = ".fsyscommander";
 	
 	private static final String		APPLICATION_TITLE = "Application.title";
 	private static final String		HELP_TITLE = "Application.help.title";
 	private static final String		HELP_CONTENT = "Application.help.content";
 	private static final Icon[]		AVATAR = {null, null, null, new ImageIcon(Application.class.getResource("avatar.jpg"))};
 
+	private static final String		CONFIRMATION_TITLE = "Confirmation.title";
+	private static final String		CONFIRMATION_EXIT = "Confirmation.exit";
+	
 	private static final String		TAB_PANEL = "panel";
 	private static final String		TAB_VIEWER = "viewer";
 	private static final String		TAB_EDITOR = "editor";
@@ -117,12 +124,16 @@ public class Application extends JFrame implements LocaleChangeListener {
 											return null;
 										}
 									};
-	
+
+	@FunctionalInterface
+	private interface SettingsCallback {
+		void processOK();
+	}
+									
 	
 	private final Localizer			localizer;
 	private final CountDownLatch	latch;
 	private final Settings			settings;
-	private final File				settingsFile = new File(".fsyscommander");
 	private final JsonSerializer<Settings>	ser; 
 	private final InetSocketAddress	addr;
 	private final JStateString		state;
@@ -156,23 +167,26 @@ public class Application extends JFrame implements LocaleChangeListener {
 			throw new IOException(exc);
 		}
 
-//		if (settingsFile.exists() && settingsFile.isFile() && settingsFile.canRead()) {
-//			try(final InputStream		is = new FileInputStream(settingsFile);
-//				final Reader			rdr = new InputStreamReader(is,"UTF-8");
-//				final JsonStaxParser	pars = new JsonStaxParser(rdr)) {
-//				
-//				pars.next();
-//				
-//				try{this.settings = ser.deserialize(pars);
-//				} catch (ContentException exc) {
-//					state.message(Severity.error,exc,"Error on loading previous settings: "+exc.getMessage());
-//					throw new IOException(exc);
-//				}
-//			}
-//		}
-//		else {
-			this.settings = new Settings(state);
-//		}
+		final File	settingsFile = new File(SETTINGS_NAME);
+		
+		if (settingsFile.exists() && settingsFile.isFile() && settingsFile.canRead()) {
+			try(final InputStream		is = new FileInputStream(settingsFile);
+				final Reader			rdr = new InputStreamReader(is,"UTF-8");
+				final JsonStaxParser	pars = new JsonStaxParser(rdr)) {
+				
+				pars.next();
+				
+				try{this.settings = ser.deserialize(pars);
+				} catch (ContentException exc) {
+					state.message(Severity.error,exc,"Error on loading previous settings: "+exc.getMessage());
+					throw new IOException(exc);
+				}
+			}
+		}
+		else {
+			this.settings = new Settings();
+		}
+		this.settings.setLogger(state);
 		
 		parent.push(localizer);
 		content.setOpaque(true);
@@ -394,24 +408,26 @@ public class Application extends JFrame implements LocaleChangeListener {
 	}	
 	
 	@OnAction("action:/files.exit")
-	private void fileExit() {
-		if (leftFsi != null) {
-			try{leftFsi.close();
-			    leftFsi = null;
-			} catch (IOException e) {
-				e.printStackTrace();
+	private void fileExit() throws LocalizationException {
+		if (!settings.confirms.onExit || askConfirm(CONFIRMATION_EXIT)) {
+			if (leftFsi != null) {
+				try{leftFsi.close();
+				    leftFsi = null;
+				} catch (IOException e) {
+					state.message(Severity.warning,e.getLocalizedMessage(),e);
+				}
 			}
-		}
-		if (rightFsi != null) {
-			try{rightFsi.close();
-				rightFsi = null;
-			} catch (IOException e) {
-				e.printStackTrace();
+			if (rightFsi != null) {
+				try{rightFsi.close();
+					rightFsi = null;
+				} catch (IOException e) {
+					state.message(Severity.warning,e.getLocalizedMessage(),e);
+				}
 			}
+			setVisible(false);
+			dispose();
+			latch.countDown();
 		}
-		setVisible(false);
-		dispose();
-		latch.countDown();
 	}
 
 	/*
@@ -450,26 +466,21 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/settings.system")
 	private void systemSettings() {
-		try{final ContentMetadataInterface		mdi = ContentModelFactory.forAnnotatedClass(settings.systemSettings.getClass());
-			final AutoBuiltForm<SystemSettings>	form = new AutoBuiltForm<>(mdi,localizer,settings.systemSettings,settings.systemSettings);
-			
-			form.setPreferredSize(new Dimension(300,200));
-			AutoBuiltForm.ask(this,localizer,form);
-		} catch (LocalizationException | IllegalArgumentException | NullPointerException | ContentException e) {
-			state.message(Severity.error,e,"Error on parameter settings: "+e.getMessage());
-		}
+		final SupportedLanguages			oldLang = settings.systemSettings.lang; 
+		
+		callSettings(settings.systemSettings,new Dimension(300,150),()->{
+			if (settings.systemSettings.lang != oldLang) {
+				try{localizer.setCurrentLocale(settings.systemSettings.lang.getLocale());
+				} catch (LocalizationException e) {
+					state.message(Severity.error,e,"Error on parameter settings: "+e.getMessage());
+				}
+			}			
+		});
 	}
 	
 	@OnAction("action:/settings.panel")
 	private void panelSettings() {
-		try{final ContentMetadataInterface		mdi = ContentModelFactory.forAnnotatedClass(settings.panelSettings.getClass());
-			final AutoBuiltForm<PanelSettings>	form = new AutoBuiltForm<>(mdi,localizer,settings.panelSettings,settings.panelSettings);
-		
-			form.setPreferredSize(new Dimension(400,150));
-			AutoBuiltForm.ask(this,localizer,form);
-		} catch (LocalizationException | IllegalArgumentException | NullPointerException | ContentException e) {
-			state.message(Severity.error,e,"Error on parameter settings: "+e.getMessage());
-		}
+		callSettings(settings.panelSettings,new Dimension(400,150),()->{});
 	}
 	
 	@OnAction("action:/settings.viewer")
@@ -482,7 +493,7 @@ public class Application extends JFrame implements LocaleChangeListener {
 		
 	}
 	
-	@OnAction("action:/	settings.colors")
+	@OnAction("action:/settings.colors")
 	private void colorSettings() {
 		
 	}
@@ -494,19 +505,12 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/settings.confirm")
 	private void confirmSettings() {
-		try{final ContentMetadataInterface	mdi = ContentModelFactory.forAnnotatedClass(settings.confirms.getClass());
-			final AutoBuiltForm<Confirms>	form = new AutoBuiltForm<>(mdi,localizer,settings.confirms,settings.confirms);
-			
-			form.setPreferredSize(new Dimension(300,200));
-			AutoBuiltForm.ask(this,localizer,form);
-		} catch (LocalizationException | IllegalArgumentException | NullPointerException | ContentException e) {
-			state.message(Severity.error,e,"Error on parameter settings: "+e.getMessage());
-		}
+		callSettings(settings.confirms,new Dimension(300,200),()->{});
 	}
 	
 	@OnAction("action:/settings.save")
 	private void saveSettings() {
-		try(final OutputStream			os = new FileOutputStream(".fsyscommander");
+		try(final OutputStream			os = new FileOutputStream(SETTINGS_NAME);
 			final Writer				wr = new OutputStreamWriter(os,"UTF-8");
 			final JsonStaxPrinter		prn = new JsonStaxPrinter(wr)) {
 				
@@ -674,9 +678,44 @@ public class Application extends JFrame implements LocaleChangeListener {
 				break;
 		}
 	}	
+
+	private <T> void callSettings(final T settings, final Dimension size, final SettingsCallback callback) {
+		try{final ContentMetadataInterface	mdi = ContentModelFactory.forAnnotatedClass(settings.getClass());
+			final AutoBuiltForm<T>			form = new AutoBuiltForm(mdi,localizer,settings,(FormManager<?,T>)settings);
+			final Object					clone = ((Resettable)settings).copy();
+			
+			for (Module m : form.getUnnamedModules()) {
+				this.getClass().getModule().addExports(settings.getClass().getPackageName(),m);
+			}
+			form.setPreferredSize(size);
+			if (AutoBuiltForm.ask(this,localizer,form)) {
+				callback.processOK();
+				if (this.settings.systemSettings.autoSaveSettings) {
+					saveSettings();
+				}
+			}
+			else {
+				((Resettable)settings).reset(clone);
+			}
+		} catch (LocalizationException | ContentException | CloneNotSupportedException e) {
+			state.message(Severity.error,e,"Error on parameter settings: "+e.getMessage());
+		}
+	}
+	
+	private boolean askConfirm(final String localizedMessage) throws LocalizationException {
+		return new JLocalizedOptionPane(localizer).confirm(this,localizedMessage,CONFIRMATION_TITLE,JOptionPane.QUESTION_MESSAGE,JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+	}
+
+	private boolean askConfirm(final LocalizedFormatter localizedFormatter) throws LocalizationException {
+		return new JLocalizedOptionPane(localizer).confirm(this,localizedFormatter,CONFIRMATION_TITLE,JOptionPane.QUESTION_MESSAGE,JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+	}
+	
 	
 	private void fillLocalizedStrings() throws LocalizationException {
 		setTitle(localizer.getValue(APPLICATION_TITLE));
+		if (menu instanceof LocaleChangeListener) {
+			((LocaleChangeListener)menu).localeChanged(localizer.currentLocale().getLocale(),localizer.currentLocale().getLocale());
+		}
 	}
 
 	public static void main(String[] args) throws ContentException, IOException, InterruptedException, NullPointerException, EnvironmentException {

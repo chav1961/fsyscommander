@@ -182,8 +182,26 @@
 		<key name="settings.confirms.onMove.tt">Request confirm to move one item</key>
 		<key name="settings.confirms.onBulkMove">Confirm on bulk move</key>
 		<key name="settings.confirms.onBulkMove.tt">Request confirm to move set of items</key>
+		<key name="settings.confirms.onDelete">Confirm on delete</key>
+		<key name="settings.confirms.onDelete.tt">Request confirm to delete item</key>
+		<key name="settings.confirms.onBulkDelete">Confirm on bulk delete</key>
+		<key name="settings.confirms.onBulkDelete.tt">Request confirm to delete set of items</key>
 		<key name="settings.confirms.onExit">Confirm on exit</key>
 		<key name="settings.confirms.onExit.tt">Request confirm to exit from file systems commander</key>
+		
+		
+<!-- Localization for settings enum PanelColumns -->
+		<key name="chav1961.fsyscommander.settings.PanelColumns.1">One</key>
+		<key name="chav1961.fsyscommander.settings.PanelColumns.1.tt">Only one column with files in the panel</key>
+		<key name="chav1961.fsyscommander.settings.PanelColumns.2">Two</key>
+		<key name="chav1961.fsyscommander.settings.PanelColumns.2.tt">Two columns with files in the panel</key>
+		<key name="chav1961.fsyscommander.settings.PanelColumns.3">Three</key>
+		<key name="chav1961.fsyscommander.settings.PanelColumns.3.tt">Three columns with files in the panel</key>
+
+<!-- Localization for confirmations --> 
+		<key name="Confirmation.title">Confirm operation...</key>
+		<key name="Confirmation.exit">Do you want to exit from File system commander</key>
+		
 	</lang>
 	<lang name="ru">
 <!-- Localization for application titles --> 
@@ -370,7 +388,24 @@
 		<key name="settings.confirms.onMove.tt">Требовать подтверждения при переносе одной сущности</key>
 		<key name="settings.confirms.onBulkMove">Подтверждать групповой перенос</key>
 		<key name="settings.confirms.onBulkMove.tt">Требовать подтверждения при переносе группы сущностей</key>
+		<key name="settings.confirms.onDelete">Подтверждать удаление</key>
+		<key name="settings.confirms.onDelete.tt">Требовать подтверждения при удалении одной сущности</key>
+		<key name="settings.confirms.onBulkDelete">Подтверждать групповое удаление</key>
+		<key name="settings.confirms.onBulkDelete.tt">Требовать подтверждения при удалении группы сущностей</key>
 		<key name="settings.confirms.onExit">Подтверждать выход</key>
 		<key name="settings.confirms.onExit.tt">Требовать подтверждения при выходе из приложения</key>
+	
+<!-- Локализация для нумерации настроек PanelColumns -->
+		<key name="chav1961.fsyscommander.settings.PanelColumns.1">Одна</key>
+		<key name="chav1961.fsyscommander.settings.PanelColumns.1.tt">Только окна колонка со списком файлов в панели</key>
+		<key name="chav1961.fsyscommander.settings.PanelColumns.2">Две</key>
+		<key name="chav1961.fsyscommander.settings.PanelColumns.2.tt">Две колонки со списком файлов в панели</key>
+		<key name="chav1961.fsyscommander.settings.PanelColumns.3">Три</key>
+		<key name="chav1961.fsyscommander.settings.PanelColumns.3.tt">Три колонки со списком файлов в панели</key>
+	
+<!-- Локализации для подтверждений --> 
+		<key name="Confirmation.title">Подтвердите операцию...</key>
+		<key name="Confirmation.exit">Вы действительно хотите выйти из приложения</key>
+	
 	</lang>	
 </localization>
