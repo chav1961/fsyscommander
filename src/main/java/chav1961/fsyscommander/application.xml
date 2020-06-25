@@ -57,8 +57,7 @@
 			<app:item name="menu.settings.viewer" caption="menu.settings.viewer" tooltip="menu.settings.viewer.tt" action="settings.viewer"/>
 			<app:item name="menu.settings.editor" caption="menu.settings.editor" tooltip="menu.settings.editor.tt" action="settings.editor"/>
 			<app:separator/>
-			<app:item name="menu.settings.colors" caption="menu.settings.colors" tooltip="menu.settings.colors.tt" action="settings.colors"/>
-			<app:item name="menu.settings.highlighting" caption="menu.settings.highlighting" tooltip="menu.settings.highlighting.tt" action="settings.highlighting"/>
+			<app:item name="menu.settings.colorsAndHighlighting" caption="menu.settings.colorsAndHighlighting" tooltip="menu.settings.colorsAndHighlighting.tt" action="settings.colorsAndHighlighting"/>
 			<app:item name="menu.settings.confirm" caption="menu.settings.confirm" tooltip="menu.settings.confirm.tt" action="settings.confirm"/>
 			<app:separator/>
 			<app:item name="menu.settings.save" caption="menu.settings.save" tooltip="menu.settings.save.tt" action="settings.save"/>

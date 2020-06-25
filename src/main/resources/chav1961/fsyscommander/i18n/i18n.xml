@@ -96,10 +96,8 @@
 		<key name="menu.settings.viewer.tt">Viewer settings</key>
 		<key name="menu.settings.editor">Editor settings</key>
 		<key name="menu.settings.editor.tt">Editor settings</key>
-		<key name="menu.settings.colors">Colors settings</key>
-		<key name="menu.settings.colors.tt">Colors settings</key>
-		<key name="menu.settings.highlighting">Highlighting</key>
-		<key name="menu.settings.highlighting.tt">File(s)/directory(es) highlighting settings</key> 
+		<key name="menu.settings.colorsAndHighlighting">Colors and highlighting</key>
+		<key name="menu.settings.colorsAndHighlighting.tt">Color scheme and file(s)/directory(es) highlighting settings</key> 
 		<key name="menu.settings.confirm">Confirmation</key>
 		<key name="menu.settings.confirm.tt">Confirmation settings</key>
 		<key name="menu.settings.save">Save settings</key>
@@ -172,6 +170,37 @@
 		<key name="settings.panels.showState">Show state string</key>
 		<key name="settings.panels.showState.tt">Show state string with current file</key>
 
+		<key name="settings.viewer">Viewer settings</key>
+		<key name="settings.viewer.tt">Set viewer parameters</key>
+		<key name="settings.viewer.type">Viewer type</key>
+		<key name="settings.viewer.type.tt">Can be either built-in or external (any executable)</key>
+		<key name="settings.viewer.file">External viewer executable</key>
+		<key name="settings.viewer.file.tt">Location of the external viewer executable</key>
+		<key name="settings.viewer.clone">Clone content</key>
+		<key name="settings.viewer.clone.tt">Always clone content from file system for viewer</key>
+
+		<key name="settings.editor">Editor settings</key>
+		<key name="settings.editor.tt">Set editor parameters</key>
+		<key name="settings.editor.type">Editor type</key>
+		<key name="settings.editor.type.tt">Can be either built-in or external (any executable)</key>
+		<key name="settings.editor.file">External editor executable</key>
+		<key name="settings.editor.file.tt">Location of the external viewer executable</key>
+		<key name="settings.editor.clone">Clone content</key>
+		<key name="settings.editor.clone.tt">Always clone content from file system for editor</key>
+
+		<key name="settings.highlights">Color scheme and highlight settings</key>
+		<key name="settings.highlights.tt">Color scheme and color settings for items in the panels</key>
+		<key name="settings.highlights.colorScheme">Color scheme</key>
+		<key name="settings.highlights.colorScheme.tt">Color scheme settings</key>		
+		<key name="settings.highlights.directory">Directory</key>
+		<key name="settings.highlights.directory.tt">Directory name</key>
+		<key name="settings.highlights.file">File</key>
+		<key name="settings.highlights.file.tt">File name</key>
+		<key name="settings.highlights.selectedDirectory">Selected directory</key>
+		<key name="settings.highlights.selectedDirectory.tt">Selected directory name</key>
+		<key name="settings.highlights.selectedFile">Selected file</key>
+		<key name="settings.highlights.selectedFile.tt">Selected file name</key>
+
 		<key name="settings.confirms">Confirms</key>
 		<key name="settings.confirms.tt">Confirms settings for file systems commander</key>
 		<key name="settings.confirms.onCopy">Confirm on copy</key>
@@ -189,7 +218,6 @@
 		<key name="settings.confirms.onExit">Confirm on exit</key>
 		<key name="settings.confirms.onExit.tt">Request confirm to exit from file systems commander</key>
 		
-		
 <!-- Localization for settings enum PanelColumns -->
 		<key name="chav1961.fsyscommander.settings.PanelColumns.1">One</key>
 		<key name="chav1961.fsyscommander.settings.PanelColumns.1.tt">Only one column with files in the panel</key>
@@ -197,6 +225,18 @@
 		<key name="chav1961.fsyscommander.settings.PanelColumns.2.tt">Two columns with files in the panel</key>
 		<key name="chav1961.fsyscommander.settings.PanelColumns.3">Three</key>
 		<key name="chav1961.fsyscommander.settings.PanelColumns.3.tt">Three columns with files in the panel</key>
+
+<!-- Localization for settings enum ApplicationColorScheme -->
+		<key name="chav1961.fsyscommander.settings.applicationColorScheme.dark">Dark</key>
+		<key name="chav1961.fsyscommander.settings.applicationColorScheme.dark.tt">Dark color settings</key>
+		<key name="chav1961.fsyscommander.settings.applicationColorScheme.light">Light</key>
+		<key name="chav1961.fsyscommander.settings.applicationColorScheme.light.tt">Light color settings</key>
+
+<!-- Localization for settings enum ViewAndEditorType -->
+		<key name="chav1961.fsyscommander.settings.viewAndEditorType.internal">internal</key>
+		<key name="chav1961.fsyscommander.settings.viewAndEditorType.internal.tt">Use built-in viewer/editor to view/edit content</key>
+		<key name="chav1961.fsyscommander.settings.viewAndEditorType.external">external</key>
+		<key name="chav1961.fsyscommander.settings.viewAndEditorType.external.tt">Use external viewer/editor to view/edit content</key>
 
 <!-- Localization for confirmations --> 
 		<key name="Confirmation.title">Confirm operation...</key>
@@ -302,10 +342,8 @@
 		<key name="menu.settings.viewer.tt">Настройки просмотрщика</key>
 		<key name="menu.settings.editor">Редактора...</key>
 		<key name="menu.settings.editor.tt">Настройки редактора</key>
-		<key name="menu.settings.colors">Раскраски...</key>
-		<key name="menu.settings.colors.tt">Настройки цветов</key>
-		<key name="menu.settings.highlighting">Подсветки...</key>
-		<key name="menu.settings.highlighting.tt">Настройки подсветки файлов и папок</key> 
+		<key name="menu.settings.colorsAndHighlighting">Цветовой схемы и подсветки...</key>
+		<key name="menu.settings.colorsAndHighlighting.tt">Настройки цветотой схемы и подсветки файлов и папок</key> 
 		<key name="menu.settings.confirm">Подтверждений...</key>
 		<key name="menu.settings.confirm.tt">Настройки подтверждений операций</key> 
 		<key name="menu.settings.save">Сохранить настройки</key>
@@ -378,6 +416,37 @@
 		<key name="settings.panels.showState">Статусная строка</key>
 		<key name="settings.panels.showState.tt">Показывать строку с описанием текущего файла</key>
 
+		<key name="settings.viewer">Настройка просмотра</key>
+		<key name="settings.viewer.tt">Настройка параметров просмотрщика</key>
+		<key name="settings.viewer.type">Тип просмотрщика</key>
+		<key name="settings.viewer.type.tt">Может быть либо встроенным, либо внешним (любой выполнимый файл)</key>
+		<key name="settings.viewer.file">Адрес внешнего просмотрщика</key>
+		<key name="settings.viewer.file.tt">Местоположение внешнего просмотрщика в файловой системе компьютера</key>
+		<key name="settings.viewer.clone">Клонировать данные</key>
+		<key name="settings.viewer.clone.tt">Всегда копировать просматриваемые данные на локальный компьютер</key>
+
+		<key name="settings.editor">Настройка редактора</key>
+		<key name="settings.editor.tt">Настройка параметров редактора</key>
+		<key name="settings.editor.type">Тип редактора</key>
+		<key name="settings.editor.type.tt">Может быть либо встроенным, либо внешним (любой выполнимый файл)</key>
+		<key name="settings.editor.file">Адрес внешнего редактора</key>
+		<key name="settings.editor.file.tt">Местоположение внешнего редактора в файловой системе компьютера</key>
+		<key name="settings.editor.clone">Клонировать данные</key>
+		<key name="settings.editor.clone.tt">Всегда копировать редактируемые данные на локальный компьютер и обратно</key>
+
+		<key name="settings.highlights">Настройки цветовой схемы и подсветки</key>
+		<key name="settings.highlights.tt">Цветовая схема и подсветка элементов в панелях</key>		
+		<key name="settings.highlights.colorScheme">Цветовая схема</key>
+		<key name="settings.highlights.colorScheme.tt">Настройки цветотвой схемы</key>		
+		<key name="settings.highlights.directory">Директория</key>
+		<key name="settings.highlights.directory.tt">Имя директории</key>
+		<key name="settings.highlights.file">Файл</key>
+		<key name="settings.highlights.file.tt">Имя файла</key>
+		<key name="settings.highlights.selectedDirectory">Выделенная директория</key>
+		<key name="settings.highlights.selectedDirectory.tt">Имя выделенной диреткории</key>
+		<key name="settings.highlights.selectedFile">Выделенный файл</key>
+		<key name="settings.highlights.selectedFile.tt">Имя выделенного файла</key>
+
 		<key name="settings.confirms">Подтверждения</key>
 		<key name="settings.confirms.tt">Настройка подтверждений для приложения</key>
 		<key name="settings.confirms.onCopy">Подтверждать копирование</key>
@@ -396,12 +465,24 @@
 		<key name="settings.confirms.onExit.tt">Требовать подтверждения при выходе из приложения</key>
 	
 <!-- Локализация для нумерации настроек PanelColumns -->
-		<key name="chav1961.fsyscommander.settings.PanelColumns.1">Одна</key>
-		<key name="chav1961.fsyscommander.settings.PanelColumns.1.tt">Только окна колонка со списком файлов в панели</key>
-		<key name="chav1961.fsyscommander.settings.PanelColumns.2">Две</key>
-		<key name="chav1961.fsyscommander.settings.PanelColumns.2.tt">Две колонки со списком файлов в панели</key>
+		<key name="chav1961.fsyscommander.settings.PanelColumns.1">Один</key>
+		<key name="chav1961.fsyscommander.settings.PanelColumns.1.tt">Только один столбец со списком файлов в панели</key>
+		<key name="chav1961.fsyscommander.settings.PanelColumns.2">Два</key>
+		<key name="chav1961.fsyscommander.settings.PanelColumns.2.tt">Два столбца со списком файлов в панели</key>
 		<key name="chav1961.fsyscommander.settings.PanelColumns.3">Три</key>
-		<key name="chav1961.fsyscommander.settings.PanelColumns.3.tt">Три колонки со списком файлов в панели</key>
+		<key name="chav1961.fsyscommander.settings.PanelColumns.3.tt">Три столбца со списком файлов в панели</key>
+	
+<!-- Локализация для нумерации настроек ApplicationColorScheme -->
+		<key name="chav1961.fsyscommander.settings.applicationColorScheme.dark">Темная</key>
+		<key name="chav1961.fsyscommander.settings.applicationColorScheme.dark.tt">Темный набор цветов</key>
+		<key name="chav1961.fsyscommander.settings.applicationColorScheme.light">Светлая</key>
+		<key name="chav1961.fsyscommander.settings.applicationColorScheme.light.tt">Светлый набор цветов</key>
+	
+<!-- Localization for settings enum ViewAndEditorType -->
+		<key name="chav1961.fsyscommander.settings.viewAndEditorType.internal">встроенный</key>
+		<key name="chav1961.fsyscommander.settings.viewAndEditorType.internal.tt">Использовать встроенный просмотрщик/редактор</key>
+		<key name="chav1961.fsyscommander.settings.viewAndEditorType.external">внешний</key>
+		<key name="chav1961.fsyscommander.settings.viewAndEditorType.external.tt">Использовать внешний просмотрщик/редактор</key>
 	
 <!-- Локализации для подтверждений --> 
 		<key name="Confirmation.title">Подтвердите операцию...</key>

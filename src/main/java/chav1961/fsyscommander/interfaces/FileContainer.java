@@ -17,7 +17,8 @@ public interface FileContainer {
 	public interface Content {
 		String getName();
 		boolean isDirectory();
-		boolean isFile();
+		long getSize();
+		long getTimestamp();
 		boolean isSelected();
 		void setSelection(boolean selection);
 	}

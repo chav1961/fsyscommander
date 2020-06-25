@@ -1,6 +1,7 @@
 package chav1961.fsyscommander;
 
 
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -29,6 +30,7 @@ import java.util.concurrent.CountDownLatch;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
@@ -41,6 +43,8 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import chav1961.fsyscommander.help.HelpService;
+import chav1961.fsyscommander.interfaces.FileContainer;
+import chav1961.fsyscommander.interfaces.FileContainer.Content;
 import chav1961.fsyscommander.interfaces.OrderingModes;
 import chav1961.fsyscommander.interfaces.Resettable;
 import chav1961.fsyscommander.settings.Settings;
@@ -141,16 +145,18 @@ public class Application extends JFrame implements LocaleChangeListener {
 	private final ConsoleOutput		console = new ConsoleOutput();		 
 	private final JPanel			screen = new JPanel(new CardLayout());
 	private final JPanel			container = new JPanel(new GridLayout(1,2));
-	private final ViewerAsTable		leftContainer = new ViewerAsTable();
-	private final ViewerAsTable		rightContainer = new ViewerAsTable();
 	private final FileViewer		viewer = new FileViewer();	
 	private final FileEditor		editor = new FileEditor();	
 	private final CommandString		commandString = new CommandString(console);
 	private final JPanel			bottomArea = new JPanel(new GridLayout(2,1));
 	private final JMenuBar			menu;
+	private final FileContainer		leftContainer = new ViewerAsTable();
+	private final FileContainer		rightContainer = new ViewerAsTable();
 	
 	private int						currentState = STATE_ORDINAL;
 	private FileSystemInterface		leftFsi = null, rightFsi = null;
+	private FileContainer			currentContainer = leftContainer;
+	private String					selectionTemplate = "*.*";
 	private OrderingModes			leftOrdering = OrderingModes.BY_NAME_ASC, rightOrdering = OrderingModes.BY_NAME_ASC;  
 	
 	public Application(final Localizer parent, final ContentMetadataInterface model, final CountDownLatch latch, final InetSocketAddress addr) throws IOException, LocalizationException {
@@ -192,10 +198,10 @@ public class Application extends JFrame implements LocaleChangeListener {
 		content.setOpaque(true);
 		setContentPane(content);
 		
-		leftContainer.setBorder(new LineBorder(Color.WHITE));
-		container.add(leftContainer);
-		rightContainer.setBorder(new LineBorder(Color.WHITE));
-		container.add(rightContainer);
+		((JComponent)leftContainer).setBorder(new LineBorder(Color.WHITE));
+		container.add(((JComponent)leftContainer));
+		((JComponent)rightContainer).setBorder(new LineBorder(Color.WHITE));
+		container.add(((JComponent)rightContainer));
         container.setOpaque(false);
         
 		bottomArea.add(commandString);
@@ -311,7 +317,7 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/left.onoffpanel")
 	private void leftOnOff() {
-		leftContainer.setVisible(!leftContainer.isVisible());
+		leftContainer.setVisibility(!leftContainer.getVisibility());
 	}
 
 	@OnAction("action:/left.changeFS")
@@ -401,6 +407,9 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/files.invselect")
 	private void fileInvSelect() {
+		for (Content item : currentContainer.totalContent()) {
+			item.setSelection(!item.isSelected());
+		}
 	}	
 	
 	@OnAction("action:/files.restselect")
@@ -485,22 +494,17 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/settings.viewer")
 	private void viewerSettings() {
-		
+		callSettings(settings.viewerSettings,new Dimension(400,150),()->{});
 	}
 	
 	@OnAction("action:/settings.editor")
 	private void editorSettings() {
-		
+		callSettings(settings.editorSettings,new Dimension(400,150),()->{});
 	}
 	
-	@OnAction("action:/settings.colors")
-	private void colorSettings() {
-		
-	}
-	
-	@OnAction("action:/settings.highlighting")
-	private void hgihlightingSettings() {
-		
+	@OnAction("action:/settings.colorsAndHighlighting")
+	private void colorsAndHighlightingSettings() {
+		callSettings(settings.highlightSettings,new Dimension(300,170),()->{});
 	}
 	
 	@OnAction("action:/settings.confirm")
@@ -593,7 +597,7 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/right.onoffpanel")
 	private void rightOnOff() {
-		rightContainer.setVisible(!rightContainer.isVisible());
+		rightContainer.setVisibility(!rightContainer.getVisibility());
 	}
 
 	@OnAction("action:/right.changeFS")
