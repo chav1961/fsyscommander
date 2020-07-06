@@ -42,7 +42,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import chav1961.fsyscommander.help.HelpService;
 import chav1961.fsyscommander.interfaces.FileContainer;
 import chav1961.fsyscommander.interfaces.FileContainer.Content;
 import chav1961.fsyscommander.interfaces.OrderingModes;
@@ -50,7 +49,6 @@ import chav1961.fsyscommander.interfaces.Resettable;
 import chav1961.fsyscommander.settings.Settings;
 import chav1961.purelib.basic.ArgParser;
 import chav1961.purelib.basic.PureLibSettings;
-import chav1961.purelib.basic.SubstitutableProperties;
 import chav1961.purelib.basic.SystemErrLoggerFacade;
 import chav1961.purelib.basic.Utils;
 import chav1961.purelib.basic.exceptions.ContentException;
@@ -86,9 +84,13 @@ import chav1961.purelib.ui.swing.useful.LocalizedFormatter;
 public class Application extends JFrame implements LocaleChangeListener {
 	private static final long 		serialVersionUID = -8313830909078065332L;
 	
+	public static final String		ARG_SERVER = "server";
 	public static final String		ARG_PORT = "port";
 	public static final String		ARG_ROOT = "root";
 
+	private static final String		HELP_ROOT = "/help";
+	private static final URI		HELP_LOCATION = URI.create("fsys:file:./src/main/resources/chav1961/fsyscommander/static");
+	
 	private static final String		SETTINGS_NAME = ".fsyscommander";
 	
 	private static final String		APPLICATION_TITLE = "Application.title";
@@ -133,13 +135,13 @@ public class Application extends JFrame implements LocaleChangeListener {
 	private interface SettingsCallback {
 		void processOK();
 	}
-									
 	
 	private final Localizer			localizer;
 	private final CountDownLatch	latch;
 	private final Settings			settings;
 	private final JsonSerializer<Settings>	ser; 
 	private final InetSocketAddress	addr;
+	private final URI				helpRoot;
 	private final JStateString		state;
 	private final JPanel			content = new JPanel(new BorderLayout());
 	private final ConsoleOutput		console = new ConsoleOutput();		 
@@ -152,16 +154,18 @@ public class Application extends JFrame implements LocaleChangeListener {
 	private final JMenuBar			menu;
 	private final FileContainer		leftContainer = new ViewerAsTable();
 	private final FileContainer		rightContainer = new ViewerAsTable();
-	
+
+	private boolean					helpServerStarted = false;
 	private int						currentState = STATE_ORDINAL;
 	private FileSystemInterface		leftFsi = null, rightFsi = null;
 	private FileContainer			currentContainer = leftContainer;
 	private String					selectionTemplate = "*.*";
 	private OrderingModes			leftOrdering = OrderingModes.BY_NAME_ASC, rightOrdering = OrderingModes.BY_NAME_ASC;  
 	
-	public Application(final Localizer parent, final ContentMetadataInterface model, final CountDownLatch latch, final InetSocketAddress addr) throws IOException, LocalizationException {
+	public Application(final Localizer parent, final ContentMetadataInterface model, final CountDownLatch latch, final InetSocketAddress helpServerAddr, final URI helpRoot) throws IOException, LocalizationException {
 		this.latch = latch;
-		this.addr = addr;
+		this.addr = helpServerAddr;
+		this.helpRoot = helpRoot;
 		this.localizer = LocalizerFactory.getLocalizer(model.getRoot().getLocalizerAssociated());
 		this.state = new JStateString(this.localizer);
 		this.state.setBorder(new LineBorder(Color.BLACK));
@@ -435,6 +439,11 @@ public class Application extends JFrame implements LocaleChangeListener {
 			}
 			setVisible(false);
 			dispose();
+			if (helpServerStarted) {
+				try{PureLibSettings.uninstallHelpContent(HELP_ROOT);
+				} catch (ContentException | IOException e) {
+				}
+			}
 			latch.countDown();
 		}
 	}
@@ -627,7 +636,14 @@ public class Application extends JFrame implements LocaleChangeListener {
 	@OnAction("action:/help.guide")
 	private void helpGuide() throws LocalizationException, IOException {
 		if (Desktop.isDesktopSupported()) {
-			Desktop.getDesktop().browse(URI.create("http://"+addr.getHostName()+":"+addr.getPort()));
+			if (!helpServerStarted) {
+				try{PureLibSettings.installHelpContent(HELP_ROOT,FileSystemFactory.createFileSystem(helpRoot));
+					helpServerStarted = true;
+				} catch (ContentException e) {
+					throw new IOException(e.getLocalizedMessage(),e);
+				}
+			}
+			Desktop.getDesktop().browse(URI.create("http://"+addr.getHostName()+":"+addr.getPort()+"/help/index.html"));
 		}
 		else {
 			state.message(Severity.warning, "Desktop is not supported to start browser...");
@@ -730,21 +746,19 @@ public class Application extends JFrame implements LocaleChangeListener {
 		
 		try(final InputStream		is = Application.class.getResourceAsStream("application.xml");
 			final LoggerFacade		log = new SystemErrLoggerFacade();
-			final Localizer			parent = new PureLibLocalizer();
-			final HelpService		hs = new HelpService(log, new SubstitutableProperties(props))) {
+			final Localizer			parent = new PureLibLocalizer()) {
 			final CountDownLatch 	latch = new CountDownLatch(1);
 			
-			hs.start();
-			new Application(parent,ContentModelFactory.forXmlDescription(is),latch,new InetSocketAddress("localhost",ap.getValue(ARG_PORT,Integer.class))).setVisible(true);
+			new Application(parent,ContentModelFactory.forXmlDescription(is),latch,new InetSocketAddress(ap.getValue(ARG_SERVER,String.class),ap.getValue(ARG_PORT,Integer.class)),ap.getValue(ARG_ROOT,URI.class)).setVisible(true);
 			latch.await();
-			hs.stop();
 		}
 	}
 
 	private static class ApplicationArgParser extends ArgParser {
 		private static final ArgDescription[]	PARM_LIST = {
-							 new IntegerArg(ARG_PORT,false,"port to open nanoservice for help with browsers",12321)
-							,new URIArg(ARG_ROOT,false,"root to open nanoservice for help with browsers","fsys:"+Application.class.getResource("Application.class")+"!../../../chav1961/fsyscommander/static")
+							 new IntegerArg(ARG_PORT,false,"port to open nanoservice for help with browsers",PureLibSettings.instance().getProperty(PureLibSettings.HTTP_SERVER_PORT,int.class))
+							,new StringArg(ARG_SERVER,false,"server address to open nanoservice for help with browsers","localhost")
+							,new URIArg(ARG_ROOT,false,"root to open nanoservice for help with browsers",HELP_LOCATION.toString())
 							};	
 		
 		public ApplicationArgParser() {
