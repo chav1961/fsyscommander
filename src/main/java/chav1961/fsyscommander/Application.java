@@ -1,7 +1,5 @@
 package chav1961.fsyscommander;
 
-
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -11,6 +9,8 @@ import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -27,6 +27,7 @@ import java.net.URISyntaxException;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
+import java.util.regex.Pattern;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -44,8 +45,10 @@ import javax.swing.event.HyperlinkListener;
 
 import chav1961.fsyscommander.interfaces.FileContainer;
 import chav1961.fsyscommander.interfaces.FileContainer.Content;
+import chav1961.fsyscommander.interfaces.OKCallback;
 import chav1961.fsyscommander.interfaces.OrderingModes;
 import chav1961.fsyscommander.interfaces.Resettable;
+import chav1961.fsyscommander.settings.Confirms;
 import chav1961.fsyscommander.settings.Settings;
 import chav1961.purelib.basic.ArgParser;
 import chav1961.purelib.basic.PureLibSettings;
@@ -93,12 +96,20 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	private static final String		SETTINGS_NAME = ".fsyscommander";
 	
+	private static final String		INITIAL_FILESYSTEM = "fsys:"+new File("./").getAbsoluteFile().toURI().toString();
+	
 	private static final String		APPLICATION_TITLE = "Application.title";
 	private static final String		HELP_TITLE = "Application.help.title";
 	private static final String		HELP_CONTENT = "Application.help.content";
 	private static final Icon[]		AVATAR = {null, null, null, new ImageIcon(Application.class.getResource("avatar.jpg"))};
 
 	private static final String		CONFIRMATION_TITLE = "Confirmation.title";
+	private static final String		CONFIRMATION_COPY_BULK_MESSAGE = "Confirmation.copy.bulk.message";
+	private static final String		CONFIRMATION_COPY_MESSAGE = "Confirmation.copy.message";
+	private static final String		CONFIRMATION_MOVE_BULK_MESSAGE = "Confirmation.move.bulk.message";
+	private static final String		CONFIRMATION_MOVE_MESSAGE = "Confirmation.move.message";
+	private static final String		CONFIRMATION_DELETE_BULK_MESSAGE = "Confirmation.delete.bulk.message";
+	private static final String		CONFIRMATION_DELETE_MESSAGE = "Confirmation.delete.message";
 	private static final String		CONFIRMATION_EXIT = "Confirmation.exit";
 	
 	private static final String		TAB_PANEL = "panel";
@@ -131,11 +142,6 @@ public class Application extends JFrame implements LocaleChangeListener {
 										}
 									};
 
-	@FunctionalInterface
-	private interface SettingsCallback {
-		void processOK();
-	}
-	
 	private final Localizer			localizer;
 	private final CountDownLatch	latch;
 	private final Settings			settings;
@@ -147,20 +153,24 @@ public class Application extends JFrame implements LocaleChangeListener {
 	private final ConsoleOutput		console = new ConsoleOutput();		 
 	private final JPanel			screen = new JPanel(new CardLayout());
 	private final JPanel			container = new JPanel(new GridLayout(1,2));
-	private final FileViewer		viewer = new FileViewer();	
-	private final FileEditor		editor = new FileEditor();	
+	private final FileViewer		viewer;	
+	private final FileEditor		editor;	
 	private final CommandString		commandString = new CommandString(console);
 	private final JPanel			bottomArea = new JPanel(new GridLayout(2,1));
 	private final JMenuBar			menu;
-	private final FileContainer		leftContainer = new ViewerAsTable();
-	private final FileContainer		rightContainer = new ViewerAsTable();
+	private FileContainer			leftContainer;
+	private FileContainer			rightContainer;
+	private final SelectionMask		mask;
+	private final DirectoryCreation	directory;
 
 	private boolean					helpServerStarted = false;
 	private int						currentState = STATE_ORDINAL;
 	private FileSystemInterface		leftFsi = null, rightFsi = null;
 	private FileContainer			currentContainer = leftContainer;
 	private String					selectionTemplate = "*.*";
-	private OrderingModes			leftOrdering = OrderingModes.BY_NAME_ASC, rightOrdering = OrderingModes.BY_NAME_ASC;  
+	private OrderingModes			leftOrdering = OrderingModes.BY_NAME_ASC, rightOrdering = OrderingModes.BY_NAME_ASC;
+	private boolean					leftVisibility = true, rightVisibility = true, totalVisibility = true;
+	private boolean					leftContainerFirst = true;
 	
 	public Application(final Localizer parent, final ContentMetadataInterface model, final CountDownLatch latch, final InetSocketAddress helpServerAddr, final URI helpRoot) throws IOException, LocalizationException {
 		this.latch = latch;
@@ -169,6 +179,8 @@ public class Application extends JFrame implements LocaleChangeListener {
 		this.localizer = LocalizerFactory.getLocalizer(model.getRoot().getLocalizerAssociated());
 		this.state = new JStateString(this.localizer);
 		this.state.setBorder(new LineBorder(Color.BLACK));
+		this.mask = new SelectionMask(state); 
+		this.directory = new DirectoryCreation(state); 
 		this.menu = SwingUtils.toJComponent(model.byUIPath(URI.create(ContentMetadataInterface.UI_SCHEME+":/model/navigation.top.mainmenu")),JMenuBar.class);
 
 		try{this.ser = JsonSerializer.buildSerializer(Settings.class);
@@ -202,11 +214,30 @@ public class Application extends JFrame implements LocaleChangeListener {
 		content.setOpaque(true);
 		setContentPane(content);
 		
+		leftContainer = new ViewerAsTable(settings.highlightSettings,(c)->processContentItems(leftContainer,leftFsi,c));
+		rightContainer = new ViewerAsTable(settings.highlightSettings,(c)->processContentItems(rightContainer,rightFsi,c));
 		((JComponent)leftContainer).setBorder(new LineBorder(Color.WHITE));
+		((JComponent)leftContainer).addFocusListener(new FocusListener() {
+			@Override public void focusLost(FocusEvent e) {}
+			@Override public void focusGained(FocusEvent e) {currentContainer = leftContainer;}
+		});
 		container.add(((JComponent)leftContainer));
 		((JComponent)rightContainer).setBorder(new LineBorder(Color.WHITE));
+		((JComponent)rightContainer).addFocusListener(new FocusListener() {
+			@Override public void focusLost(FocusEvent e) {}
+			@Override public void focusGained(FocusEvent e) {currentContainer = rightContainer;}
+		});
 		container.add(((JComponent)rightContainer));
-        container.setOpaque(false);
+		container.setOpaque(false);
+
+    	this.viewer = new FileViewer(settings.highlightSettings,()->{
+    					((CardLayout)screen.getLayout()).show(screen,TAB_PANEL);
+    					((JComponent)currentContainer).requestFocusInWindow();
+    				});	
+    	this.editor = new FileEditor(settings.highlightSettings,()->{
+    					((CardLayout)screen.getLayout()).show(screen,TAB_PANEL);
+    					((JComponent)currentContainer).requestFocusInWindow();
+    				});	
         
 		bottomArea.add(commandString);
 		bottomArea.add(state);
@@ -219,8 +250,8 @@ public class Application extends JFrame implements LocaleChangeListener {
 
         final JLayeredPane layeredPane = new JLayeredPane();
         
-        layeredPane.add(console, new Integer(0));
-        layeredPane.add(screen, new Integer(1));
+        layeredPane.add(console, Integer.valueOf(0));
+        layeredPane.add(screen, Integer.valueOf(1));
         layeredPane.addComponentListener(new ComponentListener() {
 			@Override public void componentShown(ComponentEvent e) {}
 			@Override public void componentMoved(ComponentEvent e) {}
@@ -244,6 +275,14 @@ public class Application extends JFrame implements LocaleChangeListener {
 		SwingUtils.centerMainWindow(this,0.75f);
 		localizer.addLocaleChangeListener(this);
 		fillLocalizedStrings();
+		
+		leftFsi = FileSystemFactory.createFileSystem(URI.create(INITIAL_FILESYSTEM));
+		((ViewerAsTable)leftContainer).fillContent(leftFsi);
+		rightFsi = FileSystemFactory.createFileSystem(URI.create(INITIAL_FILESYSTEM));
+		((ViewerAsTable)rightContainer).fillContent(rightFsi);
+		
+		currentContainer = leftContainer;
+		((JComponent)currentContainer).requestFocusInWindow();
 		console.println("preved!");
 		pack();
 	}
@@ -259,10 +298,12 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/left.asTable")
 	private void leftAsTable() {
+		state.message(Severity.warning, "Not implemented yet...");
 	}
 	
 	@OnAction("action:/left.asTree")
 	private void leftAsTree() {
+		state.message(Severity.warning, "Not implemented yet...");
 	}
 	
 	@OnAction("action:/left.sort.name.asc")
@@ -321,7 +362,8 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/left.onoffpanel")
 	private void leftOnOff() {
-		leftContainer.setVisibility(!leftContainer.getVisibility());
+		leftVisibility = !leftVisibility;
+		refreshPanelVisibility();
 	}
 
 	@OnAction("action:/left.changeFS")
@@ -340,8 +382,8 @@ public class Application extends JFrame implements LocaleChangeListener {
 	}
 
 	private void refreshLeftPanel() {
-		// TODO Auto-generated method stub
-		
+		leftContainer.setOrderingMode(leftOrdering.getOrderingMode());
+		leftContainer.setOrderingDirection(leftOrdering.getOrderingDirection());
 	}
 
 	
@@ -350,11 +392,22 @@ public class Application extends JFrame implements LocaleChangeListener {
 	 */
 
 	@OnAction("action:/files.view")
-	private void fileView() {
+	private void fileView() throws IOException {
 		switch (currentState) {
 			case STATE_ORDINAL	:
-				currentState = STATE_IN_VIEW;
-				((CardLayout)screen.getLayout()).show(screen,TAB_VIEWER);
+				final Content 	item = currentContainer.currentContent();
+			
+				if (!item.isDirectory()) {
+					try(final FileSystemInterface	fsi = leftFsi.clone().open(item.getName());
+						final InputStream			is = fsi.read()) {
+						
+						viewer.loadContent(is);
+					}
+					currentState = STATE_IN_VIEW;
+					((CardLayout)screen.getLayout()).show(screen,TAB_VIEWER);
+					viewer.requestFocusInWindow();
+					break;
+				}
 				break;
 			case STATE_IN_VIEW	:
 				break;
@@ -369,6 +422,7 @@ public class Application extends JFrame implements LocaleChangeListener {
 			case STATE_ORDINAL	:
 				currentState = STATE_IN_EDIT;
 				((CardLayout)screen.getLayout()).show(screen,TAB_EDITOR);
+				state.message(Severity.warning, "Not implemented yet...");
 				break;
 			case STATE_IN_VIEW	:
 				break;
@@ -378,35 +432,229 @@ public class Application extends JFrame implements LocaleChangeListener {
 	}	
 	
 	@OnAction("action:/files.copy")
-	private void fileCopy() {
+	private void fileCopy() throws LocalizationException, IOException {
+		if (currentContainer == leftContainer) {
+			fileCopy(leftFsi,rightFsi,settings.confirms,leftContainer,rightContainer);
+			((ViewerAsTable)rightContainer).fillContent(rightFsi);
+		}
+		else {
+			fileCopy(rightFsi,leftFsi,settings.confirms,rightContainer,leftContainer);
+			((ViewerAsTable)leftContainer).fillContent(leftFsi);
+		}
 	}	
 	
+	private void fileCopy(final FileSystemInterface from, final FileSystemInterface to, final Confirms confirms, final FileContainer fromContainer, final FileContainer toContainer) throws LocalizationException {
+		try {
+			if (fromContainer.hasSelections()) {
+				int	count = 0;
+				
+				for (Content item : fromContainer.selectedContent()) {
+					count++;
+				}
+				
+				if (!confirms.onBulkCopy || askConfirm(new LocalizedFormatter(CONFIRMATION_COPY_BULK_MESSAGE,count,to.getPath()))) {
+					try {state.start("Copying...",count);
+					
+						count = 0;
+						for (Content item : fromContainer.selectedContent()) {
+							try(final FileSystemInterface	fsi = from.clone().open(item.getName())) {
+								fsi.copy(to);
+							}
+							if (!state.processed(++count)) {
+								break;
+							}
+						}
+					} finally {
+						state.end();
+						state.message(Severity.info, "Completed");
+					}
+				}
+			}
+			else {
+				final Content	content = fromContainer.currentContent();
+				
+				if (!confirms.onCopy ||  askConfirm(new LocalizedFormatter(CONFIRMATION_COPY_MESSAGE,content.getName(),to.getPath()))) {
+					try(final FileSystemInterface	fsi = from.clone().open(content.getName())) {
+						fsi.copy(to);
+					}
+					state.message(Severity.info, "Completed");
+				}
+			}
+		} catch (IOException exc) {
+			state.message(Severity.error, "I/O error while copying: "+exc.getLocalizedMessage());
+		}
+	}
+
 	@OnAction("action:/files.move")
-	private void fileMove() {
+	private void fileMove() throws LocalizationException, IOException {
+		if (currentContainer == leftContainer) {
+			fileMove(leftFsi,rightFsi,settings.confirms,leftContainer,rightContainer);
+		}
+		else {
+			fileMove(rightFsi,leftFsi,settings.confirms,rightContainer,leftContainer);
+		}
+		((ViewerAsTable)leftContainer).fillContent(leftFsi);
+		((ViewerAsTable)rightContainer).fillContent(rightFsi);
 	}	
+
+	private void fileMove(final FileSystemInterface from, final FileSystemInterface to, final Confirms confirms, final FileContainer fromContainer, final FileContainer toContainer) throws LocalizationException {
+		try {
+			if (fromContainer.hasSelections()) {
+				int	count = 0;
+				
+				for (Content item : fromContainer.selectedContent()) {
+					count++;
+				}
+				
+				if (!confirms.onBulkMove || askConfirm(new LocalizedFormatter(CONFIRMATION_MOVE_BULK_MESSAGE,count,to.getPath()))) {
+					try {state.start("Moving...",count);
+					
+						count = 0;
+						for (Content item : fromContainer.selectedContent()) {
+							try(final FileSystemInterface	fsi = from.clone().open(item.getName())) {
+								fsi.move(to);
+							}
+							if (!state.processed(++count)) {
+								break;
+							}
+						}
+					} finally {
+						state.end();
+						state.message(Severity.info, "Completed");
+					}
+				}
+			}
+			else {
+				final Content	content = fromContainer.currentContent();
+				
+				if (!confirms.onMove ||  askConfirm(new LocalizedFormatter(CONFIRMATION_MOVE_MESSAGE,content.getName(),to.getPath()))) {
+					try(final FileSystemInterface	fsi = from.clone().open(content.getName())) {
+						fsi.move(to);
+					}
+					state.message(Severity.info, "Completed");
+				}
+			}
+		} catch (IOException exc) {
+			state.message(Severity.error, "I/O error while moving: "+exc.getLocalizedMessage());
+		}
+	}
 	
 	@OnAction("action:/files.mkdir")
 	private void fileMkDir() {
+		callSettings(directory,new Dimension(400,60),()->{
+			if (directory.name != null && !directory.name.isEmpty()) {
+				try(final FileSystemInterface	fsi = (currentContainer == leftContainer ? leftFsi : rightFsi).clone().open(directory.name)) {
+					if (fsi.exists()) {
+						if (fsi.isFile()) {
+							state.message(Severity.warning, "Name ["+directory.name+"] already exists and is a file!");
+						}
+						else {
+							state.message(Severity.warning, "Directory ["+directory.name+"] already exists!");
+						}
+					}
+					else {
+						fsi.mkDir();
+						((ViewerAsTable)currentContainer).fillContent(currentContainer == leftContainer ? leftFsi : rightFsi);
+						state.message(Severity.info, "Directory ["+directory.name+"] creates successfully");
+					}
+				} catch (IOException e) {
+					state.message(Severity.warning, "Directory ["+directory.name+"] was not created, "+e.getLocalizedMessage());
+				}
+			}
+			else {
+				state.message(Severity.info, "Directory name can't be empty!["+directory.name+"] creates successfully");
+			}
+		});
 	}	
 	
 	@OnAction("action:/files.remove")
-	private void fileRemove() {
+	private void fileRemove() throws IOException, LocalizationException {
+		if (currentContainer == leftContainer) {
+			fileRemove(leftFsi,settings.confirms,leftContainer);
+			((ViewerAsTable)leftContainer).fillContent(leftFsi);
+		}
+		else {
+			fileRemove(rightFsi,settings.confirms,rightContainer);
+			((ViewerAsTable)rightContainer).fillContent(rightFsi);
+		}
 	}	
+
+	private void fileRemove(final FileSystemInterface fsi, final Confirms confirms, final FileContainer container) throws LocalizationException {
+		try {
+			if (container.hasSelections()) {
+				int	count = 0;
+				
+				for (Content item : container.selectedContent()) {
+					count++;
+				}
+				
+				if (!confirms.onBulkDelete || askConfirm(new LocalizedFormatter(CONFIRMATION_DELETE_BULK_MESSAGE,count))) {
+					try {state.start("Moving...",count);
+					
+						count = 0;
+						for (Content item : container.selectedContent()) {
+							try(final FileSystemInterface	entity = fsi.clone().open(item.getName())) {
+								entity.deleteAll();
+							}
+							if (!state.processed(++count)) {
+								break;
+							}
+						}
+					} finally {
+						state.end();
+						state.message(Severity.info, "Completed");
+					}
+				}
+			}
+			else {
+				final Content	content = container.currentContent();
+				
+				if (!confirms.onDelete ||  askConfirm(new LocalizedFormatter(CONFIRMATION_DELETE_MESSAGE,content.getName()))) {
+					try(final FileSystemInterface	entity = fsi.clone().open(content.getName())) {
+						entity.deleteAll();
+					}
+					state.message(Severity.info, "Completed");
+				}
+			}
+		} catch (IOException exc) {
+			state.message(Severity.error, "I/O error while deleting: "+exc.getLocalizedMessage());
+		}
+	}
 
 	@OnAction("action:/files.mount")
 	private void fileMount() {
+		state.message(Severity.warning, "Not implemented yet...");
 	}	
 	
 	@OnAction("action:/files.unmount")
 	private void fileUnmount() {
+		state.message(Severity.warning, "Not implemented yet...");
 	}	
 
 	@OnAction("action:/files.select")
 	private void fileSelect() {
+		callSettings(mask,new Dimension(200,60),()->{
+			final Pattern	p = Pattern.compile(Utils.fileMask2Regex(mask.mask));
+
+			for (Content c : currentContainer.totalContent()) {
+				if (p.matcher(c.getName()).matches()) {
+					c.setSelection(true);
+				}
+			}
+		});
 	}	
 
 	@OnAction("action:/files.unselect")
 	private void fileUnselect() {
+		callSettings(mask,new Dimension(200,60),()->{
+			final Pattern	p = Pattern.compile(Utils.fileMask2Regex(mask.mask));
+
+			for (Content c : currentContainer.totalContent()) {
+				if (p.matcher(c.getName()).matches()) {
+					c.setSelection(false);
+				}
+			}
+		});
 	}	
 	
 	@OnAction("action:/files.invselect")
@@ -418,6 +666,9 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/files.restselect")
 	private void fileRestSelect() {
+		for (Content item : currentContainer.totalContent()) {
+			item.setSelection(false);
+		}
 	}	
 	
 	@OnAction("action:/files.exit")
@@ -454,27 +705,38 @@ public class Application extends JFrame implements LocaleChangeListener {
 
 	@OnAction("action:/command.findfile")
 	private void commandFindFile() {
-		
+		state.message(Severity.warning, "Not implemented yet...");
 	}
 	
 	@OnAction("action:/command.findfolders")
 	private void commandFindFolders() {
-		
+		state.message(Severity.warning, "Not implemented yet...");
 	}
 	
 	@OnAction("action:/command.comparefolders")
 	private void commandCompareFolders() {
-		
+		state.message(Severity.warning, "Not implemented yet...");
 	}
 	
 	@OnAction("action:/command.swappanels")
 	private void commandSwapPanels() {
-		
+		container.remove((JComponent)leftContainer);
+		container.remove((JComponent)rightContainer);
+		leftContainerFirst = !leftContainerFirst;
+		if (leftContainerFirst) {
+			container.add(((JComponent)leftContainer));
+			container.add(((JComponent)rightContainer));
+		}
+		else {
+			container.add(((JComponent)rightContainer));
+			container.add(((JComponent)leftContainer));
+		}
 	}
 	
 	@OnAction("action:/command.onoffpanels")
 	private void commandOnOffPanels() {
-		
+		totalVisibility = !totalVisibility;
+		refreshPanelVisibility();
 	}
 	
 	
@@ -513,7 +775,7 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/settings.colorsAndHighlighting")
 	private void colorsAndHighlightingSettings() {
-		callSettings(settings.highlightSettings,new Dimension(300,170),()->{});
+		callSettings(settings.highlightSettings,new Dimension(300,170),()->{refreshLeftPanel(); refreshRightPanel();});
 	}
 	
 	@OnAction("action:/settings.confirm")
@@ -541,12 +803,12 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/right.asTable")
 	private void rightAsTable() {
-		
+		state.message(Severity.warning, "Not implemented yet...");
 	}
 	
 	@OnAction("action:/right.asTree")
 	private void rightAsTree() {
-		
+		state.message(Severity.warning, "Not implemented yet...");
 	}
 	
 	@OnAction("action:/right.sort.name.asc")
@@ -606,7 +868,8 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/right.onoffpanel")
 	private void rightOnOff() {
-		rightContainer.setVisibility(!rightContainer.getVisibility());
+		rightVisibility = !rightVisibility;
+		refreshPanelVisibility();
 	}
 
 	@OnAction("action:/right.changeFS")
@@ -625,8 +888,8 @@ public class Application extends JFrame implements LocaleChangeListener {
 	}
 
 	private void refreshRightPanel() {
-		// TODO Auto-generated method stub
-		
+		rightContainer.setOrderingMode(rightOrdering.getOrderingMode());
+		rightContainer.setOrderingDirection(rightOrdering.getOrderingDirection());
 	}
 	
 	/*
@@ -652,7 +915,7 @@ public class Application extends JFrame implements LocaleChangeListener {
 	
 	@OnAction("action:/help.update")
 	private void updateSoft() throws LocalizationException, IOException {
-		
+		state.message(Severity.warning, "Not implemented yet...");
 	}
 	
 	@OnAction("action:/help.about")
@@ -699,10 +962,22 @@ public class Application extends JFrame implements LocaleChangeListener {
 		}
 	}	
 
-	private <T> void callSettings(final T settings, final Dimension size, final SettingsCallback callback) {
+	private void processContentItems(final FileContainer container, final FileSystemInterface fsi, final Content content) throws IOException {
+		if (content.isDirectory()) {
+			fsi.open(content.getName());
+			((ViewerAsTable)container).fillContent(fsi);
+		}
+	}
+
+	private void refreshPanelVisibility() {
+		leftContainer.setVisibility(leftVisibility && totalVisibility);
+		rightContainer.setVisibility(rightVisibility && totalVisibility);
+	}
+	
+	private <T> void callSettings(final T settings, final Dimension size, final OKCallback callback) {
 		try{final ContentMetadataInterface	mdi = ContentModelFactory.forAnnotatedClass(settings.getClass());
 			final AutoBuiltForm<T>			form = new AutoBuiltForm(mdi,localizer,settings,(FormManager<?,T>)settings);
-			final Object					clone = ((Resettable)settings).copy();
+			final Object					clone = settings instanceof Resettable ? ((Resettable)settings).copy() : null;
 			
 			for (Module m : form.getUnnamedModules()) {
 				this.getClass().getModule().addExports(settings.getClass().getPackageName(),m);
@@ -714,14 +989,14 @@ public class Application extends JFrame implements LocaleChangeListener {
 					saveSettings();
 				}
 			}
-			else {
+			else if (clone != null) {
 				((Resettable)settings).reset(clone);
 			}
 		} catch (LocalizationException | ContentException | CloneNotSupportedException e) {
 			state.message(Severity.error,e,"Error on parameter settings: "+e.getMessage());
 		}
 	}
-	
+
 	private boolean askConfirm(final String localizedMessage) throws LocalizationException {
 		return new JLocalizedOptionPane(localizer).confirm(this,localizedMessage,CONFIRMATION_TITLE,JOptionPane.QUESTION_MESSAGE,JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 	}

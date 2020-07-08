@@ -241,6 +241,24 @@
 <!-- Localization for confirmations --> 
 		<key name="Confirmation.title">Confirm operation...</key>
 		<key name="Confirmation.exit">Do you want to exit from File system commander</key>
+		<key name="Confirmation.copy.bulk.message">Copy [%1$d] items to %2$s?</key>
+		<key name="Confirmation.copy.message">Copy [%1$s] to %2$s?</key>
+		<key name="Confirmation.move.bulk.message">Move [%1$d] items to %2$s?</key>
+		<key name="Confirmation.move.message">Move [%1$s] to %2$s?</key>
+		<key name="Confirmation.delete.bulk.message">Delete [%1$d] items?</key>
+		<key name="Confirmation.delete.message">Delete [%1$s]?</key>
+
+<!-- Localization for selection masks --> 
+		<key name="selectionmask.title">Type selection mask...</key>
+		<key name="selectionmask.title.tt">Type mask criteria to select/unselect content...</key>
+		<key name="selectionmask.mask">Selection mask</key>
+		<key name="selectionmask.mask.tt">Mask to select files/directories. Wildcards '*' and '?' are available</key>	
+
+<!-- Localization for directory creation --> 
+		<key name="directorycreation.title">Type directory name...</key>
+		<key name="directorycreation.title.tt">Type name for directory to create...</key>
+		<key name="directorycreation.name">Directory</key>
+		<key name="directorycreation.name.tt">Type directory name</key>
 		
 	</lang>
 	<lang name="ru">
@@ -487,6 +505,24 @@
 <!-- Локализации для подтверждений --> 
 		<key name="Confirmation.title">Подтвердите операцию...</key>
 		<key name="Confirmation.exit">Вы действительно хотите выйти из приложения</key>
+		<key name="Confirmation.copy.bulk.message">Скопировать [%1$d] объектов в %2$s?</key>
+		<key name="Confirmation.copy.message">Скопировать [%1$s] в %2$s?</key>
+		<key name="Confirmation.move.bulk.message">Перенести [%1$d] объектов в %2$s?</key>
+		<key name="Confirmation.move.message">Перенести [%1$s] в %2$s?</key>
+		<key name="Confirmation.delete.bulk.message">Удалить [%1$d] объектов?</key>
+		<key name="Confirmation.delete.message">Удалить [%1$s]?</key>
+	
+<!-- Локализация для выбора маски --> 
+		<key name="selectionmask.title">Введите маску выбора...</key>
+		<key name="selectionmask.title.tt">Введите маску для выбора/снаятия выбора содержимого...</key>
+		<key name="selectionmask.mask">Маска выбора</key>
+		<key name="selectionmask.mask.tt">Маска для выбора файлов/директорий. Допустимы специальные символы '*' и '?'</key>	
+	
+<!-- Локализация для создания директорий --> 
+		<key name="directorycreation.title">Введите имя директории...</key>
+		<key name="directorycreation.title.tt">Введите имя вновь создаваемой директории...</key>
+		<key name="directorycreation.name">Имя</key>
+		<key name="directorycreation.name.tt">Введите имя директории</key>
 	
 	</lang>	
 </localization>

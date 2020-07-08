@@ -1,11 +1,12 @@
 package chav1961.fsyscommander.interfaces;
 
-public interface FileContainer {
+public interface FileContainer extends Navigable {
 	boolean hasSelections();
 
 	public enum OrderingMode {
 		NoOrdering,
 		ByName,
+		ByExtension,
 		BySize,
 		ByModificationDate
 	}
@@ -25,6 +26,8 @@ public interface FileContainer {
 	
 	Iterable<Content> totalContent();
 	Iterable<Content> selectedContent();
+	
+	Content currentContent();
 	
 	OrderingMode getOrderingMode();
 	void setOrderingMode(OrderingMode mode);
