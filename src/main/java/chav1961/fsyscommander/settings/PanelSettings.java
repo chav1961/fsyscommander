@@ -32,7 +32,7 @@ public class PanelSettings implements FormManager<Object,PanelSettings>, Cloneab
 	}
 	
 	@Override
-	public RefreshMode onField(PanelSettings inst, Object id, String fieldName, Object oldValue) throws FlowException, LocalizationException {
+	public RefreshMode onField(PanelSettings inst, Object id, String fieldName, Object oldValue, boolean beforeCommit) throws FlowException, LocalizationException {
 		return RefreshMode.DEFAULT;
 	}
 	

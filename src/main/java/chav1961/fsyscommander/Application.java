@@ -127,7 +127,7 @@ public class Application extends JFrame implements LocaleChangeListener {
 										}
 								
 										@Override
-										public RefreshMode onField(Object inst, Object id, String fieldName, Object oldValue) throws FlowException, LocalizationException {
+										public RefreshMode onField(Object inst, Object id, String fieldName, Object oldValue, boolean beforeCommit) throws FlowException, LocalizationException {
 											return RefreshMode.DEFAULT;
 										}
 								

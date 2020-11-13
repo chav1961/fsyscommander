@@ -30,7 +30,7 @@ public class ViewerSettings implements FormManager<Object,ViewerSettings>, Clone
 	}
 
 	@Override
-	public RefreshMode onField(final ViewerSettings inst, final Object id, final String fieldName, final Object oldValue) throws FlowException, LocalizationException {
+	public RefreshMode onField(final ViewerSettings inst, final Object id, final String fieldName, final Object oldValue, final boolean beforeCommit) throws FlowException, LocalizationException {
 		return RefreshMode.DEFAULT;
 	}
 	

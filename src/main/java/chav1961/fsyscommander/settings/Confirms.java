@@ -41,7 +41,7 @@ public class Confirms implements FormManager<Object,Confirms>, Cloneable, Resett
 	}
 	
 	@Override
-	public RefreshMode onField(Confirms inst, Object id, String fieldName, Object oldValue) throws FlowException, LocalizationException {
+	public RefreshMode onField(Confirms inst, Object id, String fieldName, Object oldValue, boolean beforeCommit) throws FlowException, LocalizationException {
 		return RefreshMode.DEFAULT;
 	}
 	

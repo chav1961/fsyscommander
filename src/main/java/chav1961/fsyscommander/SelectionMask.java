@@ -25,7 +25,7 @@ public class SelectionMask implements FormManager<Object,SelectionMask> {
 	}
 	
 	@Override
-	public RefreshMode onField(final SelectionMask inst, final Object id, final String fieldName, final Object oldValue) throws FlowException, LocalizationException {
+	public RefreshMode onField(final SelectionMask inst, final Object id, final String fieldName, final Object oldValue, final boolean beforeCommit) throws FlowException, LocalizationException {
 		return RefreshMode.DEFAULT;
 	}
 	
