@@ -122,17 +122,7 @@ public class Application extends JFrame implements LocaleChangeListener {
 
 	private static final FormManager<Object,Object>	DUMMY_MGR = new FormManager<Object,Object>() {
 										@Override
-										public RefreshMode onRecord(RecordAction action, Object oldRecord, Object oldId, Object newRecord, Object newId) throws FlowException, LocalizationException {
-											return RefreshMode.DEFAULT;
-										}
-								
-										@Override
 										public RefreshMode onField(Object inst, Object id, String fieldName, Object oldValue, boolean beforeCommit) throws FlowException, LocalizationException {
-											return RefreshMode.DEFAULT;
-										}
-								
-										@Override
-										public RefreshMode onAction(Object inst, Object id, String actionName, Object parameter) throws FlowException, LocalizationException {
 											return RefreshMode.DEFAULT;
 										}
 								
