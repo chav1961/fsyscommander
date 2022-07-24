@@ -964,9 +964,9 @@ public class Application extends JFrame implements LocaleChangeListener {
 		rightContainer.setVisibility(rightVisibility && totalVisibility);
 	}
 	
-	private <T> void callSettings(final T settings, final Dimension size, final OKCallback callback) {
+	private <T,K> void callSettings(final T settings, final Dimension size, final OKCallback callback) {
 		try{final ContentMetadataInterface	mdi = ContentModelFactory.forAnnotatedClass(settings.getClass());
-			final AutoBuiltForm<T>			form = new AutoBuiltForm(mdi,localizer,PureLibSettings.INTERNAL_LOADER,settings,(FormManager<?,T>)settings);
+			final AutoBuiltForm<T,K>		form = new AutoBuiltForm<>(mdi,localizer,PureLibSettings.INTERNAL_LOADER,settings,(FormManager<K,T>)settings);
 			final Object					clone = settings instanceof Resettable ? ((Resettable)settings).copy() : null;
 			
 			for (Module m : form.getUnnamedModules()) {
