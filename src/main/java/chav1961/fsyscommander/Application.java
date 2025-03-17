@@ -51,8 +51,8 @@ import chav1961.fsyscommander.interfaces.Resettable;
 import chav1961.fsyscommander.settings.Confirms;
 import chav1961.fsyscommander.settings.Settings;
 import chav1961.purelib.basic.ArgParser;
+import chav1961.purelib.basic.MimeType;
 import chav1961.purelib.basic.PureLibSettings;
-import chav1961.purelib.basic.SystemErrLoggerFacade;
 import chav1961.purelib.basic.Utils;
 import chav1961.purelib.basic.exceptions.ContentException;
 import chav1961.purelib.basic.exceptions.EnvironmentException;
@@ -71,7 +71,6 @@ import chav1961.purelib.i18n.interfaces.SupportedLanguages;
 import chav1961.purelib.json.JsonSerializer;
 import chav1961.purelib.model.ContentModelFactory;
 import chav1961.purelib.model.interfaces.ContentMetadataInterface;
-import chav1961.purelib.nanoservice.NanoServiceFactory;
 import chav1961.purelib.streams.JsonStaxParser;
 import chav1961.purelib.streams.JsonStaxPrinter;
 import chav1961.purelib.ui.interfaces.FormManager;
@@ -680,11 +679,6 @@ public class Application extends JFrame implements LocaleChangeListener {
 			}
 			setVisible(false);
 			dispose();
-			if (helpServerStarted) {
-				try{PureLibSettings.uninstallHelpContent(HELP_ROOT);
-				} catch (ContentException | IOException e) {
-				}
-			}
 			latch.countDown();
 		}
 	}
@@ -890,11 +884,7 @@ public class Application extends JFrame implements LocaleChangeListener {
 	private void helpGuide() throws LocalizationException, IOException {
 		if (Desktop.isDesktopSupported()) {
 			if (!helpServerStarted) {
-				try{PureLibSettings.installHelpContent(HELP_ROOT,FileSystemFactory.createFileSystem(helpRoot));
-					helpServerStarted = true;
-				} catch (ContentException e) {
-					throw new IOException(e.getLocalizedMessage(),e);
-				}
+				helpServerStarted = true;
 			}
 			Desktop.getDesktop().browse(URI.create("http://"+addr.getHostName()+":"+addr.getPort()+"/help/index.html"));
 		}
@@ -926,7 +916,7 @@ public class Application extends JFrame implements LocaleChangeListener {
 				}
 			}
 		});
-		try(final Reader	rdr = localizer.getContent(HELP_CONTENT,PureLibSettings.MIME_CREOLE_TEXT,PureLibSettings.MIME_HTML_TEXT)) {
+		try(final Reader	rdr = localizer.getContent(HELP_CONTENT,MimeType.MIME_CREOLE_TEXT,MimeType.MIME_HTML_TEXT)) {
 			pane.read(rdr, null);
 		}
 		new JLocalizedOptionPane(localizer,AVATAR).message(this, pane, HELP_TITLE, JOptionPane.INFORMATION_MESSAGE);
@@ -1005,12 +995,9 @@ public class Application extends JFrame implements LocaleChangeListener {
 
 	public static void main(String[] args) throws ContentException, IOException, InterruptedException, NullPointerException, EnvironmentException {
 		final ArgParser		ap = new ApplicationArgParser().parse(args);
-		final Properties	props = Utils.mkProps(NanoServiceFactory.NANOSERVICE_PORT,ap.getValue(ARG_PORT,Integer.class).toString()
-												 ,NanoServiceFactory.NANOSERVICE_ROOT,ap.getValue(ARG_ROOT,URI.class).toString());
-		
 		
 		try(final InputStream		is = Application.class.getResourceAsStream("application.xml");
-			final LoggerFacade		log = new SystemErrLoggerFacade();
+			final LoggerFacade		log = LoggerFacade.Factory.newInstance(URI.create(LoggerFacade.LOGGER_SCHEME+":err:/"));
 			final Localizer			parent = new PureLibLocalizer()) {
 			final CountDownLatch 	latch = new CountDownLatch(1);
 			
