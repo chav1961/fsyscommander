@@ -64,7 +64,6 @@ import chav1961.purelib.basic.interfaces.LoggerFacade.Severity;
 import chav1961.purelib.fsys.FileSystemFactory;
 import chav1961.purelib.fsys.interfaces.FileSystemInterface;
 import chav1961.purelib.i18n.LocalizerFactory;
-import chav1961.purelib.i18n.PureLibLocalizer;
 import chav1961.purelib.i18n.interfaces.Localizer;
 import chav1961.purelib.i18n.interfaces.Localizer.LocaleChangeListener;
 import chav1961.purelib.i18n.interfaces.SupportedLanguages;
@@ -998,7 +997,7 @@ public class Application extends JFrame implements LocaleChangeListener {
 		
 		try(final InputStream		is = Application.class.getResourceAsStream("application.xml");
 			final LoggerFacade		log = LoggerFacade.Factory.newInstance(URI.create(LoggerFacade.LOGGER_SCHEME+":err:/"));
-			final Localizer			parent = new PureLibLocalizer()) {
+			final Localizer			parent = PureLibSettings.PURELIB_LOCALIZER) {
 			final CountDownLatch 	latch = new CountDownLatch(1);
 			
 			new Application(parent,ContentModelFactory.forXmlDescription(is),latch,new InetSocketAddress(ap.getValue(ARG_SERVER,String.class),ap.getValue(ARG_PORT,Integer.class)),ap.getValue(ARG_ROOT,URI.class)).setVisible(true);
